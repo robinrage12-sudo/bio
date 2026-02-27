@@ -44,7 +44,7 @@ function getPSLLevel(score: number): PSLLevel {
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
-function dist(a: faceapi.Point, b: faceapi.Point) {
+function dist(a: {x:number;y:number}, b: {x:number;y:number}) {
   return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
 }
 
