@@ -15,92 +15,92 @@ interface LookmaxScore {
 interface Advice {
   priority: number; category: string; icon: string; title: string;
   description: string; scoreGain: string; timeline: string;
-  difficulty: "Facile"|"Moyen"|"Difficile"; femaleOnly?: boolean;
+  difficulty: "Easy"|"Medium"|"Hard"; femaleOnly?: boolean;
 }
 
 // ─── NEW REVIEWS (AI precision & seriousness focused) ──────────────────────
 const REVIEWS = [
   {name:"Alexandre T.", age:26, score:"8.4", avatar:"AT", color:"#A855F7", stars:5,
-   text:"L'analyse biométrique est d'une précision redoutable. Chaque score correspondait exactement à ce que je percevais. Les conseils sont sérieux, basés sur de vraies études scientifiques."},
+   text:"The biometric analysis is remarkably accurate. Every score matched exactly what I perceived. The advice is serious and based on real scientific studies."},
   {name:"Camille R.",   age:23, score:"7.6", avatar:"CR", color:"#00D4FF", stars:5,
-   text:"J'ai été impressionnée par la rigueur de l'IA. Les 50+ points analysés donnent un résultat objectif, bien loin des applis de beauté classiques. Un outil professionnel."},
+   text:"I was impressed by the rigor of the AI. The 50+ analyzed points deliver an objective result, far from classic beauty apps. A truly professional tool."},
   {name:"Marc D.",      age:29, score:"7.1", avatar:"MD", color:"#A855F7", stars:5,
-   text:"Le rapport détaillé m'a permis de comprendre précisément mes points faibles. Les conseils sont actionnables et hiérarchisés par impact réel. Très sérieux."},
+   text:"The detailed report helped me precisely understand my weak points. The advice is actionable and ranked by real impact. Very serious."},
   {name:"Léa F.",       age:21, score:"8.0", avatar:"LF", color:"#00D4FF", stars:5,
-   text:"Analyse quasi-médicale de mon visage. L'IA détecte des subtilités que l'œil humain ne voit pas. Les résultats sont cohérents et reproductibles."},
+   text:"A near-medical analysis of my face. The AI detects subtleties the human eye can't see. Results are consistent and reproducible."},
   {name:"Thomas K.",    age:31, score:"6.8", avatar:"TK", color:"#A855F7", stars:4,
-   text:"Ce qui m'a convaincu, c'est la transparence de la méthode. On voit exactement quels critères sont mesurés et leur pondération. Un vrai laboratoire biométrique."},
+   text:"What convinced me was the transparency of the method. You see exactly which criteria are measured and their weighting. A real biometric laboratory."},
   {name:"Sofia M.",     age:24, score:"8.7", avatar:"SM", color:"#00D4FF", stars:5,
-   text:"Après avoir consulté plusieurs médecins esthétiques, l'analyse IA est cohérente avec leurs conclusions. La précision est bluffante pour un outil en ligne."},
+   text:"After consulting several aesthetic doctors, the AI analysis is consistent with their conclusions. The accuracy is stunning for an online tool."},
 ];
 
 // ─── RIGHT TECH ARGUMENTS ─────────────────────────────────────────────────
 const TECH_ARGS = [
-  {icon:"🔬", title:"50+ Points Biométriques", sub:"Précision maximale", color:"#A855F7",
-   text:"Notre IA analyse plus de 50 points biométriques faciaux distincts : symétrie, tiers faciaux, canthal tilt, ratio mandibulaire, proportions dorées et qualité cutanée. Une précision inaccessible à l'œil humain."},
-  {icon:"🧬", title:"Algorithme de Détection", sub:"68 landmarks IA", color:"#00D4FF",
-   text:"Basé sur le réseau face-api à 68 points de repère faciaux, notre modèle cartographie l'ensemble de la géométrie du visage avec une précision sub-millimétrique sur chaque photo."},
-  {icon:"📐", title:"Ratios Scientifiques", sub:"Rhodes 2006 · Marquardt 2002", color:"#A855F7",
-   text:"Chaque critère correspond à un marqueur évolutif validé : symétrie = santé génétique (Rhodes, 2006), tiers faciaux = développement osseux optimal (Marquardt, 2002), canthal tilt = attractivité perçue."},
-  {icon:"⚡", title:"Traitement Local & Privé", sub:"Zéro upload de données", color:"#00D4FF",
-   text:"L'intégralité du calcul s'effectue directement sur votre appareil. Aucune photo n'est transmise à un serveur. Vos données biométriques restent 100% privées et sécurisées."},
-  {icon:"🎯", title:"Score Décimal Précis", sub:"Calibration sur population réelle", color:"#A855F7",
-   text:"Le score final est calibré sur une distribution statistique réelle, convertissant les mesures brutes en un indice d'attractivité décimal de 1 à 10 comparable à l'ensemble de la population."},
-  {icon:"📊", title:"Potentiel de Progression", sub:"IA prédictive", color:"#00D4FF",
-   text:"L'algorithme identifie vos critères les plus améliorables et prédit votre score potentiel après optimisation. Une feuille de route personnalisée, basée sur vos données biométriques réelles."},
+  {icon:"🔬", title:"50+ Biometric Points", sub:"Maximum precision", color:"#A855F7",
+   text:"Our AI analyzes over 50 distinct facial biometric points: symmetry, facial thirds, canthal tilt, mandibular ratio, golden proportions, and skin quality. A precision inaccessible to the human eye."},
+  {icon:"🧬", title:"Detection Algorithm", sub:"68 AI landmarks", color:"#00D4FF",
+   text:"Based on the face-api network with 68 facial landmarks, our model maps the entire facial geometry with sub-millimeter precision on each photo."},
+  {icon:"📐", title:"Scientific Ratios", sub:"Rhodes 2006 · Marquardt 2002", color:"#A855F7",
+   text:"Each criterion corresponds to a validated evolutionary marker: symmetry = genetic health (Rhodes, 2006), facial thirds = optimal bone development (Marquardt, 2002), canthal tilt = perceived attractiveness."},
+  {icon:"⚡", title:"Local & Private Processing", sub:"Zero data upload", color:"#00D4FF",
+   text:"All computation is done directly on your device. No photo is transmitted to a server. Your biometric data stays 100% private and secure."},
+  {icon:"🎯", title:"Precise Decimal Score", sub:"Calibrated on real population", color:"#A855F7",
+   text:"The final score is calibrated on a real statistical distribution, converting raw measurements into a decimal attractiveness index from 1 to 10 comparable to the entire population."},
+  {icon:"📊", title:"Progression Potential", sub:"Predictive AI", color:"#00D4FF",
+   text:"The algorithm identifies your most improvable criteria and predicts your potential score after optimization. A personalized roadmap, based on your real biometric data."},
 ];
 
 // ─── ADVICE ENGINE ────────────────────────────────────────────────────────────
 function generateAdvice(scores:LookmaxScore, gender:string, age:number):Advice[] {
-  const isFemale = gender==="Femme"; const all:Advice[]=[];
+  const isFemale = gender==="Female"; const all:Advice[]=[];
   if(scores.jawlineScore<70){
-    all.push({priority:1,category:"Corps",icon:"⚡",title:"Réduction du gras facial — transformation la plus rapide",
-      description:`Le visage perd ses graisses en premier lors d'un déficit calorique. Descendre à ~10-12% BF (homme) ou ~18-20% (femme) révèle instantanément la mâchoire et les contours.\n\nProtocole :\n— Déficit 300-400 kcal/jour\n— Cardio zone 2, 45 min × 4/semaine\n— Protéines à 2g/kg de poids\n\nÉtude Toronto (2015) : -5kg de gras améliore l'attractivité perçue de ~30%.`,
-      scoreGain:"+0.8 à +2.0 pts",timeline:"4–8 semaines",difficulty:"Difficile"});
-    all.push({priority:1,category:"Hydratation",icon:"💧",title:"Élimination de la rétention d'eau — visage défini en 72h",
-      description:`La rétention gonfle les joues et masque la définition osseuse.\n\n1. Sodium <2g/jour\n2. Boire 2.5L/jour\n3. Supprimer l'alcool 2 semaines\n4. Dormir sur le dos, tête surélevée\n5. Réduire sucres raffinés`,
-      scoreGain:"+0.3 à +0.8 pt",timeline:"72h–2 semaines",difficulty:"Facile"});
+    all.push({priority:1,category:"Body",icon:"⚡",title:"Facial fat reduction — fastest transformation",
+      description:`The face loses fat first during a caloric deficit. Dropping to ~10-12% BF (men) or ~18-20% (women) instantly reveals the jaw and contours.\n\nProtocol:\n— 300-400 kcal/day deficit\n— Zone 2 cardio, 45 min × 4/week\n— Protein at 2g/kg of bodyweight\n\nToronto Study (2015): -5kg of fat improves perceived attractiveness by ~30%.`,
+      scoreGain:"+0.8 to +2.0 pts",timeline:"4–8 weeks",difficulty:"Hard"});
+    all.push({priority:1,category:"Hydration",icon:"💧",title:"Eliminating water retention — defined face in 72h",
+      description:`Water retention puffs the cheeks and hides bone definition.\n\n1. Sodium <2g/day\n2. Drink 2.5L/day\n3. Cut alcohol for 2 weeks\n4. Sleep on your back, head elevated\n5. Reduce refined sugars`,
+      scoreGain:"+0.3 to +0.8 pt",timeline:"72h–2 weeks",difficulty:"Easy"});
   }
-  all.push({priority:1,category:"Posture",icon:"🦴",title:"Correction posturale — jawline immédiat dès aujourd'hui",
-    description:`La forward head posture compresse le cou, crée un double menton et détruit le jawline.\n\n10 min/jour :\n— Chin tucks : menton en arrière, 5 sec, 20 reps × 3\n— Wall angels : dos plaqué au mur\n— Stretching scalènes : 30 sec chaque côté`,
-    scoreGain:"+0.5 à +1.2 pts",timeline:"Effet immédiat + 4–8 semaines",difficulty:"Facile"});
-  all.push({priority:2,category:"Exercices faciaux",icon:"🏋️",title:"Mewing — remodelage structurel long terme",
-    description:`Langue entière contre le palais, dents légèrement en contact, respiration nasale permanente. Résultats progressifs mais durables sur la structure osseuse.`,
-    scoreGain:"+0.5 à +1.5 pts",timeline:"6–24 mois",difficulty:"Facile"});
-  all.push({priority:2,category:"Exercices faciaux",icon:"💪",title:"Chewing intensif — développement des masséters",
-    description:`Falim gum (5€/100 pièces) ou Mastic grec. Débuter 10-15 min/jour, monter à 30-45 min/jour. Stopper si douleurs ATM.`,
-    scoreGain:"+0.3 à +0.8 pt",timeline:"3–6 mois",difficulty:"Facile"});
-  all.push({priority:2,category:"Skincare",icon:"✨",title:"Routine skincare AM/PM — actifs scientifiquement validés",
-    description:`Matin : CeraVe nettoyant (12€) → Vitamine C The Ordinary (6€) → SPF 50+ La Roche-Posay (20€)\nSoir : Nettoyant → Rétinol 0.2% The Ordinary (6€) 2-3x/semaine → Cerave PM\n\nFink et al. (2006) : texture cutanée = 15% de la perception d'attractivité.`,
-    scoreGain:"+0.3 à +0.8 pt",timeline:"4 semaines (éclat) · 3–6 mois (texture)",difficulty:"Facile"});
-  all.push({priority:3,category:"Sommeil",icon:"😴",title:"Optimisation du sommeil — beauty sleep prouvé scientifiquement",
-    description:`Axelsson et al. (2017) : des visages post-privation de sommeil sont perçus moins attractifs.\n\n— Chambre 17-19°C, obscurité totale\n— Magnésium bisglycinate 300mg + Mélatonine 0.3mg, 30 min avant le coucher\n— Horaire fixe 7j/7`,
-    scoreGain:"+0.3 à +0.5 pt",timeline:"Dès la première nuit (poches)",difficulty:"Moyen"});
+  all.push({priority:1,category:"Posture",icon:"🦴",title:"Postural correction — immediate jawline effect today",
+    description:`Forward head posture compresses the neck, creates a double chin, and destroys the jawline.\n\n10 min/day:\n— Chin tucks: chin back, 5 sec, 20 reps × 3\n— Wall angels: back flat against the wall\n— Scalene stretching: 30 sec each side`,
+    scoreGain:"+0.5 to +1.2 pts",timeline:"Immediate effect + 4–8 weeks",difficulty:"Easy"});
+  all.push({priority:2,category:"Facial Exercises",icon:"🏋️",title:"Mewing — long-term structural remodeling",
+    description:`Entire tongue against the palate, teeth lightly in contact, permanent nasal breathing. Progressive but lasting results on bone structure.`,
+    scoreGain:"+0.5 to +1.5 pts",timeline:"6–24 months",difficulty:"Easy"});
+  all.push({priority:2,category:"Facial Exercises",icon:"💪",title:"Intensive chewing — masseter development",
+    description:`Falim gum ($5/100 pieces) or Greek mastic. Start 10-15 min/day, build up to 30-45 min/day. Stop if jaw pain occurs.`,
+    scoreGain:"+0.3 to +0.8 pt",timeline:"3–6 months",difficulty:"Easy"});
+  all.push({priority:2,category:"Skincare",icon:"✨",title:"AM/PM skincare routine — scientifically validated actives",
+    description:`Morning: CeraVe cleanser ($13) → The Ordinary Vitamin C ($7) → La Roche-Posay SPF 50+ ($22)\nEvening: Cleanser → The Ordinary Retinol 0.2% ($7) 2-3x/week → CeraVe PM\n\nFink et al. (2006): skin texture = 15% of attractiveness perception.`,
+    scoreGain:"+0.3 to +0.8 pt",timeline:"4 weeks (glow) · 3–6 months (texture)",difficulty:"Easy"});
+  all.push({priority:3,category:"Sleep",icon:"😴",title:"Sleep optimization — scientifically proven beauty sleep",
+    description:`Axelsson et al. (2017): sleep-deprived faces are perceived as less attractive.\n\n— Room 63-66°F, complete darkness\n— Magnesium bisglycinate 300mg + Melatonin 0.3mg, 30 min before bed\n— Fixed schedule 7 days/week`,
+    scoreGain:"+0.3 to +0.5 pt",timeline:"From the first night (puffiness)",difficulty:"Medium"});
   if(scores.eyeScore<68){
-    all.push({priority:3,category:"Yeux",icon:"👁️",title:"Réduction des cernes et poches sous-oculaires",
-      description:`Immédiat : 2 cuillères froides 5-10 min le matin. Patchs caféine Patchology (20€/5 paires).\nLong terme : The Ordinary Caffeine Solution (7€). Réduire alcool et sodium.`,
-      scoreGain:"+0.2 à +0.5 pt",timeline:"Immédiat (froid) · 6–12 semaines (long terme)",difficulty:"Facile"});
+    all.push({priority:3,category:"Eyes",icon:"👁️",title:"Reducing dark circles and under-eye bags",
+      description:`Immediate: 2 cold spoons 5-10 min in the morning. Patchology caffeine patches ($22/5 pairs).\nLong term: The Ordinary Caffeine Solution ($8). Reduce alcohol and sodium.`,
+      scoreGain:"+0.2 to +0.5 pt",timeline:"Immediate (cold) · 6–12 weeks (long term)",difficulty:"Easy"});
   }
   if(isFemale){
-    all.push({priority:2,category:"Maquillage",icon:"👁️",title:"Fox eye — simulation d'un canthal tilt négatif",
-      description:`Eye-liner du coin interne vers l'extérieur, terminer par un trait vers le haut à 45°. Mascara uniquement sur les cils supérieurs. NYX Epic Ink Liner (11€).`,
-      scoreGain:"+0.4 à +0.9 pt",timeline:"Immédiat",difficulty:"Moyen",femaleOnly:true});
-    all.push({priority:2,category:"Maquillage",icon:"🎨",title:"Contouring — structuration visuelle du visage",
-      description:`Bronzer sur les côtés du visage, highlighter sur les pommettes. Charlotte Tilbury Filmstar (55€) ou NYX H&C (15€).`,
-      scoreGain:"+0.4 à +1.0 pt",timeline:"Immédiat",difficulty:"Moyen",femaleOnly:true});
-    all.push({priority:3,category:"Maquillage",icon:"✨",title:"Placement du blush — rehaussement instantané du visage",
-      description:`Sur les pommettes remontant vers les tempes. Rare Beauty Soft Pinch (22€) ou Elf Halo Glow (11€).`,
-      scoreGain:"+0.2 à +0.5 pt",timeline:"Immédiat",difficulty:"Facile",femaleOnly:true});
+    all.push({priority:2,category:"Makeup",icon:"👁️",title:"Fox eye — canthal tilt simulation",
+      description:`Eyeliner from inner corner outward, finishing with an upward stroke at 45°. Mascara only on upper lashes. NYX Epic Ink Liner ($12).`,
+      scoreGain:"+0.4 to +0.9 pt",timeline:"Immediate",difficulty:"Medium",femaleOnly:true});
+    all.push({priority:2,category:"Makeup",icon:"🎨",title:"Contouring — visual face structure",
+      description:`Bronzer on the sides of the face, highlighter on the cheekbones. Charlotte Tilbury Filmstar ($60) or NYX H&C ($16).`,
+      scoreGain:"+0.4 to +1.0 pt",timeline:"Immediate",difficulty:"Medium",femaleOnly:true});
+    all.push({priority:3,category:"Makeup",icon:"✨",title:"Blush placement — instant face enhancement",
+      description:`On the cheekbones extending up toward the temples. Rare Beauty Soft Pinch ($24) or Elf Halo Glow ($12).`,
+      scoreGain:"+0.2 to +0.5 pt",timeline:"Immediate",difficulty:"Easy",femaleOnly:true});
   }
-  all.push({priority:4,category:"Style",icon:"💈",title:isFemale?"Coupe adaptée à ta morphologie":"Coupe et barbe — structuration de la mâchoire",
-    description:isFemale?`Ovale : tout fonctionne. Rond : longueur sous le menton, raie sur le côté. Carré : couches douces. Long : frange latérale, volume sur les côtés.`:`High fade avec volume sur le dessus allonge le visage et fait ressortir la mâchoire. Barbe 3-7 jours : même légère, elle définit visuellement le jawline.`,
-    scoreGain:"+0.4 à +1.0 pt",timeline:"Immédiat",difficulty:"Facile"});
-  all.push({priority:4,category:"Dents",icon:"🦷",title:"Blanchiment dentaire — impact direct prouvé",
-    description:`Crest 3D Whitestrips (28€ Amazon) : 14 jours, résultats 6-12 mois. HiSmile LED (70€) pour usage répété. Oral-B électrique + fil dentaire chaque soir.`,
-    scoreGain:"+0.2 à +0.5 pt",timeline:"2–14 jours",difficulty:"Facile"});
-  all.push({priority:5,category:"Sport",icon:"🏃",title:"Musculation — physique global et dominance visuelle",
-    description:`Priorités : épaules (ratio épaule/hanche), trapèzes, dos large. 3-4 sessions/semaine, mouvements composés (Overhead Press, Pull-ups, Bench, Squat).`,
-    scoreGain:"+0.5 à +1.5 pts",timeline:"3–6 mois",difficulty:"Difficile"});
+  all.push({priority:4,category:"Style",icon:"💈",title:isFemale?"Haircut suited to your face shape":"Haircut & beard — jaw structure enhancement",
+    description:isFemale?`Oval: anything works. Round: length below the chin, side part. Square: soft layers. Long: side bangs, volume on the sides.`:`High fade with volume on top elongates the face and brings out the jaw. 3-7 day beard: even light, it visually defines the jawline.`,
+    scoreGain:"+0.4 to +1.0 pt",timeline:"Immediate",difficulty:"Easy"});
+  all.push({priority:4,category:"Teeth",icon:"🦷",title:"Teeth whitening — proven direct impact",
+    description:`Crest 3D Whitestrips ($30 Amazon): 14 days, results 6-12 months. HiSmile LED ($75) for repeated use. Electric Oral-B + floss every evening.`,
+    scoreGain:"+0.2 to +0.5 pt",timeline:"2–14 days",difficulty:"Easy"});
+  all.push({priority:5,category:"Fitness",icon:"🏃",title:"Weightlifting — overall physique and visual dominance",
+    description:`Priorities: shoulders (shoulder-to-hip ratio), traps, wide back. 3-4 sessions/week, compound movements (Overhead Press, Pull-ups, Bench, Squat).`,
+    scoreGain:"+0.5 to +1.5 pts",timeline:"3–6 months",difficulty:"Hard"});
   return all.sort((a,b)=>a.priority-b.priority);
 }
 
@@ -111,7 +111,7 @@ function toScore(ratio:number,ideal:number,tol:number){return clamp(100-(Math.ab
 
 async function analyzeFace(img:HTMLImageElement,gender:string,age:number):Promise<LookmaxScore>{
   const det=await faceapi.detectSingleFace(img,new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-  if(!det)throw new Error("Aucun visage détecté. Photo de face, bonne lumière, expression neutre.");
+  if(!det)throw new Error("No face detected. Use a front-facing photo, good lighting, neutral expression.");
   const pts=det.landmarks.positions;
   const faceWidth=dist(pts[0],pts[16]);
   const midX=(pts[0].x+pts[16].x)/2;
@@ -220,7 +220,7 @@ function BiometryGauge({score,potential}:{score:number;potential:number}){
       <circle cx="120" cy="115" r="9" fill="white" filter="url(#gn)"/>
       <circle cx="120" cy="115" r="4" fill="#0B0E14"/>
       <text x="120" y="97" textAnchor="middle" fill="white" fontSize="34" fontWeight="900" fontStyle="italic" letterSpacing="-1">{score.toFixed(1)}</text>
-      <text x="120" y="112" textAnchor="middle" fill={scoreColor} fontSize="8.5" fontWeight="700" letterSpacing="3">SCORE BIOMÉTRIQUE</text>
+      <text x="120" y="112" textAnchor="middle" fill={scoreColor} fontSize="8.5" fontWeight="700" letterSpacing="3">BIOMETRIC SCORE</text>
     </svg>
   );
 }
@@ -244,7 +244,7 @@ function DiffBadge({d}:{d:string}){
   return <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full border" style={{color:c[d],borderColor:c[d]+"40"}}>{d}</span>;
 }
 function PriorityBadge({p}:{p:number}){
-  const cfg:Record<number,{label:string,c:string}>={1:{label:"Impact Maximal",c:"#ef4444"},2:{label:"Impact Fort",c:"#f97316"},3:{label:"Impact Moyen",c:"#eab308"},4:{label:"Impact Modéré",c:"#84cc16"},5:{label:"Bonus",c:"#22c55e"}};
+  const cfg:Record<number,{label:string,c:string}>={1:{label:"Impact Maximal",c:"#ef4444"},2:{label:"Impact Fort",c:"#f97316"},3:{label:"Impact Moyen",c:"#eab308"},4:{label:"Moderate Impact",c:"#84cc16"},5:{label:"Bonus",c:"#22c55e"}};
   const item=cfg[p]; if(!item)return null;
   return <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full border" style={{color:item.c,borderColor:item.c+"40",background:item.c+"0a"}}>{item.label}</span>;
 }
@@ -270,33 +270,33 @@ const AMAZON_LINKS:Record<string,{label:string;url:string}[]>={
     {label:"CeraVe Nettoyant",url:"https://www.amazon.fr/s?k=cerave+nettoyant"},
     {label:"Vitamine C The Ordinary",url:"https://www.amazon.fr/s?k=the+ordinary+vitamin+c"},
     {label:"SPF 50+ La Roche-Posay",url:"https://www.amazon.fr/s?k=la+roche+posay+spf+50"},
-    {label:"Rétinol The Ordinary",url:"https://www.amazon.fr/s?k=the+ordinary+retinol"},
+    {label:"The Ordinary Retinol",url:"https://www.amazon.fr/s?k=the+ordinary+retinol"},
   ],
-  "Yeux":[
-    {label:"Patchs caféine Patchology",url:"https://www.amazon.fr/s?k=patchology+eye+patches"},
+  "Eyes":[
+    {label:"Patchology Caffeine Patches",url:"https://www.amazon.fr/s?k=patchology+eye+patches"},
     {label:"The Ordinary Caffeine Solution",url:"https://www.amazon.fr/s?k=the+ordinary+caffeine+solution"},
   ],
   "Exercices faciaux":[
-    {label:"Falim Gum (mâchoire)",url:"https://www.amazon.fr/s?k=falim+gum"},
+    {label:"Falim Gum (jaw)",url:"https://www.amazon.fr/s?k=falim+gum"},
     {label:"Mastic Grec (chewing)",url:"https://www.amazon.fr/s?k=mastic+grec+chewing+gum"},
   ],
   "Dents":[
     {label:"Crest 3D Whitestrips",url:"https://www.amazon.fr/s?k=crest+3d+whitestrips"},
-    {label:"Oral-B Électrique",url:"https://www.amazon.fr/s?k=oral+b+electrique"},
+    {label:"Electric Oral-B",url:"https://www.amazon.fr/s?k=oral+b+electrique"},
   ],
   "Sommeil":[
-    {label:"Magnésium Bisglycinate",url:"https://www.amazon.fr/s?k=magnesium+bisglycinate"},
-    {label:"Mélatonine 0.3mg",url:"https://www.amazon.fr/s?k=melatonine+0.3mg"},
+    {label:"Magnesium Bisglycinate",url:"https://www.amazon.fr/s?k=magnesium+bisglycinate"},
+    {label:"Melatonin 0.3mg",url:"https://www.amazon.fr/s?k=melatonine+0.3mg"},
   ],
   "Maquillage":[
     {label:"NYX Epic Ink Liner",url:"https://www.amazon.fr/s?k=nyx+epic+ink+liner"},
     {label:"Rare Beauty Blush",url:"https://www.amazon.fr/s?k=rare+beauty+soft+pinch+blush"},
   ],
   "Corps":[
-    {label:"Protéines Whey (déficit)",url:"https://www.amazon.fr/s?k=whey+proteine"},
+    {label:"Whey Protein (deficit)",url:"https://www.amazon.fr/s?k=whey+proteine"},
   ],
   "Sport":[
-    {label:"Bandes de résistance",url:"https://www.amazon.fr/s?k=bandes+resistance+musculation"},
+    {label:"Resistance bands",url:"https://www.amazon.fr/s?k=bandes+resistance+musculation"},
     {label:"Gants de musculation",url:"https://www.amazon.fr/s?k=gants+musculation"},
   ],
   "Posture":[
@@ -309,18 +309,18 @@ const AMAZON_LINKS:Record<string,{label:string;url:string}[]>={
 
 // ─── TECH SCAN MESSAGES ───────────────────────────────────────────────────────
 const SCAN_MESSAGES = [
-  "Initialisation du module IA...",
-  "Détection du visage en cours...",
-  "Mapping 68 landmarks biométriques...",
-  "Calcul des ratios faciaux...",
-  "Analyse de la symétrie mandibulaire...",
-  "Mesure du canthal tilt orbital...",
-  "Évaluation des tiers faciaux doriens...",
-  "Analyse de la symétrie des arcades...",
-  "Calibration du score biométrique...",
-  "Calcul du potentiel morphologique...",
-  "Génération du rapport personnalisé...",
-  "Analyse complète ✓",
+  "Initializing AI module...",
+  "Detecting face...",
+  "Mapping 68 biometric landmarks...",
+  "Computing facial ratios...",
+  "Analyzing mandibular symmetry...",
+  "Measuring orbital canthal tilt...",
+  "Evaluating Dorian facial thirds...",
+  "Analyzing brow symmetry...",
+  "Calibrating biometric score...",
+  "Computing morphological potential...",
+  "Generating personalized report...",
+  "Analysis complete ✓",
 ];
 
 export default function Home(){
@@ -382,10 +382,10 @@ export default function Home(){
     try{
       const score=await analyzeFace(imageEl,gender,age);
       const adv=generateAdvice(score,gender,age);
-      setProgress(100);setAnalysisStep("Analyse complète ✓");
+      setProgress(100);setAnalysisStep("Analysis complete ✓");
       await new Promise(r=>setTimeout(r,400));
       setResults(score);setAdvice(adv);setActiveTab("scores");setPage("results");
-    }catch(err:any){setError(err.message||"Erreur d'analyse.");}
+    }catch(err:any){setError(err.message||"Analysis error.");}
     finally{setAnalyzing(false);}
   },[imageEl,modelsLoaded,gender,age]);
 
@@ -409,13 +409,13 @@ export default function Home(){
 
           {/* LEFT — Reviews (Desktop) */}
           <div className="hidden lg:flex flex-col gap-3 w-72 xl:w-80 flex-shrink-0 p-8 pt-16 border-r border-white/[0.04] overflow-y-auto">
-            <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] mb-2">Avis vérifiés · +600 analyses</div>
+            <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] mb-2">Verified Reviews · 600+ analyses</div>
             {REVIEWS.slice(0,5).map((r,i)=>(
               <div key={i} className="p-3.5 bg-white/[0.025] border border-white/[0.04] rounded-2xl hover:border-white/[0.08] transition-all" style={{backdropFilter:"blur(10px)"}}>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-[9px] font-black flex-shrink-0" style={{background:`${r.color}25`,border:`1px solid ${r.color}40`}}>{r.avatar}</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-black text-white/65 truncate">{r.name}, {r.age} ans</p>
+                    <p className="text-[10px] font-black text-white/65 truncate">{r.name}, {r.age} yo</p>
                     <div className="flex gap-0.5">{[...Array(r.stars)].map((_,j)=><span key={j} className="text-yellow-400 text-[9px]">★</span>)}</div>
                   </div>
                   <span className="text-sm font-black flex-shrink-0" style={{color:r.color}}>{r.score}</span>
@@ -425,7 +425,7 @@ export default function Home(){
             ))}
             <div className="p-3 border rounded-xl text-center" style={{background:"rgba(168,85,247,0.06)",borderColor:"rgba(168,85,247,0.15)"}}>
               <div className="flex justify-center gap-0.5 mb-1">{[...Array(5)].map((_,j)=><span key={j} className="text-yellow-400 text-sm">★</span>)}</div>
-              <p className="text-[10px] font-black text-white/55">4.9/5 · 617 avis vérifiés</p>
+              <p className="text-[10px] font-black text-white/55">4.9/5 · 617 verified reviews</p>
             </div>
           </div>
 
@@ -433,18 +433,18 @@ export default function Home(){
           <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 border rounded-full mb-6 text-[9px] font-bold text-white/35 uppercase tracking-[0.15em]" style={{background:"rgba(0,212,255,0.05)",borderColor:"rgba(0,212,255,0.15)"}}>
               <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{background:"#00D4FF"}}/>
-              Laboratoire Biométrique IA · 50+ Points d'Analyse
+              AI Biometric Laboratory · 50+ Analysis Points
             </div>
 
-            <p className="text-[13px] font-black text-white/50 uppercase tracking-[0.25em] mb-3">Analyse Faciale de Précision</p>
+            <p className="text-[13px] font-black text-white/50 uppercase tracking-[0.25em] mb-3">Precision Facial Analysis</p>
             <h1 className="font-black leading-none tracking-tighter mb-4" style={{fontSize:"clamp(4rem,12vw,8rem)",fontStyle:"italic",background:"linear-gradient(150deg,#ffffff 0%,#e0c3fc 30%,#A855F7 60%,#00D4FF 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>
               BioMetry Lab
             </h1>
 
             <div className="flex flex-col items-center gap-2 mb-6">
-              <p className="text-white/70 text-xl font-bold tracking-wide">Score biométrique décimal + potentiel IA</p>
+              <p className="text-white/70 text-xl font-bold tracking-wide">Decimal biometric score + AI potential</p>
               <p className="text-white/45 text-[14px] leading-relaxed">
-                50+ points analysés · Symétrie · Tiers faciaux · Canthal tilt · Jawline
+                50+ points analyzed · Symmetry · Facial thirds · Canthal tilt · Jawline
               </p>
             </div>
 
@@ -452,18 +452,18 @@ export default function Home(){
             <div className="flex flex-col items-center gap-3 mb-8">
               <button onClick={()=>setPage("form")} className="group flex items-center gap-4 px-12 py-5 bg-white text-black font-black text-[11px] uppercase tracking-[0.2em] rounded-full transition-all hover:scale-[1.03]" style={{boxShadow:"0 0 50px rgba(168,85,247,0.25)"}}>
                 <span className="px-2.5 py-1 text-white text-[8px] rounded-full font-black uppercase" style={{background:"#A855F7"}}>FREE</span>
-                Scanner mon visage
+                Scan my face
                 <span className="group-hover:translate-x-1.5 transition-transform">→</span>
               </button>
-              <p className="text-[10px] text-white/35 tracking-wide font-semibold">Analyse gratuite · Résultats en 45 sec · 100% local &amp; privé</p>
+              <p className="text-[10px] text-white/35 tracking-wide font-semibold">Free analysis · Results in 45 sec · 100% local &amp; private</p>
             </div>
 
             {/* Tech stats */}
             <div className="w-full max-w-md grid grid-cols-3 gap-2 mb-7">
               {[
-                {icon:"🎯",t:"50+",s:"Points biométriques analysés"},
-                {icon:"🧬",t:"68",s:"Landmarks faciaux IA"},
-                {icon:"⚡",t:"45s",s:"Résultats en temps réel"},
+                {icon:"🎯",t:"50+",s:"Biometric points analyzed"},
+                {icon:"🧬",t:"68",s:"AI facial landmarks"},
+                {icon:"⚡",t:"45s",s:"Real-time results"},
               ].map((item,i)=>(
                 <div key={i} className="p-3 rounded-xl text-center border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.05)"}}>
                   <div className="text-lg mb-1">{item.icon}</div>
@@ -478,22 +478,22 @@ export default function Home(){
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-xl">🔬</span>
                 <div>
-                  <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.15em]">Méthode Biométrique IA</p>
-                  <p className="text-[9px] text-white/25 mt-0.5">50+ critères · Science-based · Décimale 1–10</p>
+                  <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.15em]">AI Biometric Method</p>
+                  <p className="text-[9px] text-white/25 mt-0.5">50+ criteria · Science-based · Decimal 1–10</p>
                 </div>
               </div>
               <p className="text-[12px] text-white/50 leading-relaxed mb-4">
-                Notre IA analyse <span className="text-white font-black">plus de 50 points biométriques</span> pour une précision maximale : symétrie faciale, tiers faciaux doriens, canthal tilt orbital, ratio mandibulaire, qualité cutanée et bien d'autres marqueurs évolutifs.
+                Our AI analyzes <span className="text-white font-black">over 50 biometric points</span> for maximum precision: facial symmetry, Dorian facial thirds, orbital canthal tilt, mandibular ratio, skin quality and many other evolutionary markers.
               </p>
               <div className="grid grid-cols-2 gap-1.5">
                 {[
-                  {k:"Symétrie faciale",v:"25% du score"},
-                  {k:"Score yeux",v:"20% du score"},
-                  {k:"Tiers faciaux",v:"15% du score"},
-                  {k:"Jawline / Menton",v:"15% du score"},
-                  {k:"Canthal tilt",v:"10% du score"},
-                  {k:"Lèvres",v:"8% du score"},
-                  {k:"Qualité détection",v:"7% du score"},
+                  {k:"Facial symmetry",v:"25% of score"},
+                  {k:"Eye score",v:"20% of score"},
+                  {k:"Facial thirds",v:"15% of score"},
+                  {k:"Jawline / Chin",v:"15% of score"},
+                  {k:"Canthal tilt",v:"10% of score"},
+                  {k:"Lips",v:"8% of score"},
+                  {k:"Detection quality",v:"7% of score"},
                 ].map((c,i)=>(
                   <div key={i} className="flex justify-between">
                     <span className="text-[9px] text-white/30">{c.k}</span>
@@ -521,18 +521,18 @@ export default function Home(){
 
           {/* RIGHT — Technical Arguments (Desktop) */}
           <div className="hidden lg:flex flex-col gap-3 w-72 xl:w-80 flex-shrink-0 p-8 pt-16 border-l border-white/[0.04] overflow-y-auto">
-            <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] mb-2">Technologie de précision</div>
+            <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] mb-2">Precision Technology</div>
 
             {/* Hero tech card */}
             <div className="p-4 rounded-2xl border glow-card" style={{borderColor:"rgba(0,212,255,0.20)",background:"rgba(0,212,255,0.06)"}}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl">🎯</span>
                 <div>
-                  <p className="text-[10px] font-black" style={{color:"#00D4FF"}}>50+ Points Biométriques</p>
-                  <p className="text-[8px] text-white/22 font-bold uppercase tracking-wider">Précision maximale</p>
+                  <p className="text-[10px] font-black" style={{color:"#00D4FF"}}>50+ Biometric Points</p>
+                  <p className="text-[8px] text-white/22 font-bold uppercase tracking-wider">Maximum precision</p>
                 </div>
               </div>
-              <p className="text-[9px] text-white/38 leading-relaxed">Notre IA analyse plus de <span className="text-white font-black">50 points biométriques</span> faciaux distincts pour une précision inaccessible à l'œil humain. Un vrai laboratoire numérique.</p>
+              <p className="text-[9px] text-white/38 leading-relaxed">Our AI analyzes over <span className="text-white font-black">50 distinct facial biometric points</span> for a precision inaccessible to the human eye. A true digital laboratory.</p>
             </div>
 
             {TECH_ARGS.map((a,i)=>(
@@ -560,28 +560,28 @@ export default function Home(){
       <main className="min-h-screen text-white flex flex-col items-center justify-center px-4 relative" style={{background:"#0B0E14",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_0%,rgba(168,85,247,0.09),transparent)]"/>
         <div className="relative z-10 w-full max-w-sm">
-          <button onClick={()=>setPage("landing")} className="text-white/20 hover:text-white/50 text-[10px] font-black uppercase tracking-[0.15em] mb-12 flex items-center gap-2 transition-colors">← Retour</button>
+          <button onClick={()=>setPage("landing")} className="text-white/20 hover:text-white/50 text-[10px] font-black uppercase tracking-[0.15em] mb-12 flex items-center gap-2 transition-colors">← Back</button>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 text-[8px] font-bold text-white/30 uppercase tracking-widest border" style={{background:"rgba(0,212,255,0.04)",borderColor:"rgba(0,212,255,0.12)"}}>
             <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{background:"#00D4FF"}}/>
-            Calibrage biométrique
+            Biometric calibration
           </div>
-          <h2 className="text-5xl font-black italic tracking-tighter mb-1">Profil</h2>
-          <p className="text-white/22 text-sm mb-10">Paramétrage de l'analyse IA</p>
+          <h2 className="text-5xl font-black italic tracking-tighter mb-1">Profile</h2>
+          <p className="text-white/22 text-sm mb-10">AI analysis configuration</p>
           <div className="space-y-6">
             <div>
-              <label className="text-[9px] font-black text-white/25 uppercase tracking-[0.15em] block mb-3">Genre</label>
+              <label className="text-[9px] font-black text-white/25 uppercase tracking-[0.15em] block mb-3">Gender</label>
               <div className="grid grid-cols-2 gap-3">
-                {["Femme","Homme"].map(g=>(
+                {["Female","Male"].map(g=>(
                   <button key={g} onClick={()=>setGender(g)} className={`py-4 rounded-2xl font-black text-xs uppercase tracking-wider transition-all ${gender===g?"bg-white text-black scale-[1.02]":"bg-white/[0.03] text-white/35 border border-white/[0.06] hover:bg-white/[0.07]"}`}>{g}</button>
                 ))}
               </div>
             </div>
             <div>
-              <label className="text-[9px] font-black text-white/25 uppercase tracking-[0.15em] block mb-3">Âge</label>
-              <input type="number" min={13} max={80} value={age||""} onChange={e=>setAge(e.target.value?parseInt(e.target.value):null)} placeholder="Ton âge" className="w-full py-4 px-5 border rounded-2xl text-white font-black text-center text-2xl placeholder-white/12 focus:outline-none transition-all" style={{background:"rgba(255,255,255,0.03)",borderColor:"rgba(255,255,255,0.06)"}} onFocus={e=>{e.target.style.borderColor="rgba(0,212,255,0.3)"}} onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,0.06)"}}/>
+              <label className="text-[9px] font-black text-white/25 uppercase tracking-[0.15em] block mb-3">Age</label>
+              <input type="number" min={13} max={80} value={age||""} onChange={e=>setAge(e.target.value?parseInt(e.target.value):null)} placeholder="Your age" className="w-full py-4 px-5 border rounded-2xl text-white font-black text-center text-2xl placeholder-white/12 focus:outline-none transition-all" style={{background:"rgba(255,255,255,0.03)",borderColor:"rgba(255,255,255,0.06)"}} onFocus={e=>{e.target.style.borderColor="rgba(0,212,255,0.3)"}} onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,0.06)"}}/>
             </div>
             <button onClick={()=>{if(gender&&age)setPage("analysis");}} className={`w-full py-5 font-black text-[11px] uppercase tracking-[0.15em] rounded-2xl transition-all ${gender&&age?"text-black hover:scale-[1.01]":"bg-white/[0.03] text-white/12 cursor-not-allowed"}`} style={gender&&age?{background:"linear-gradient(135deg,#A855F7,#00D4FF)",boxShadow:"0 0 30px rgba(168,85,247,0.3)"}:{}}>
-              Lancer le scan →
+              Start scan →
             </button>
           </div>
         </div>
@@ -596,15 +596,15 @@ export default function Home(){
         <style>{CSS}</style>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_50%_50%,rgba(168,85,247,0.07),transparent)]"/>
         <div className="relative z-10 w-full max-w-sm">
-          {!analyzing&&<button onClick={()=>setPage("form")} className="text-white/20 hover:text-white/50 text-[10px] font-black uppercase tracking-[0.15em] mb-10 flex items-center gap-2 transition-colors">← Retour</button>}
+          {!analyzing&&<button onClick={()=>setPage("form")} className="text-white/20 hover:text-white/50 text-[10px] font-black uppercase tracking-[0.15em] mb-10 flex items-center gap-2 transition-colors">← Back</button>}
 
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 text-[8px] font-bold text-white/30 uppercase tracking-widest border" style={{background:"rgba(0,212,255,0.04)",borderColor:"rgba(0,212,255,0.12)"}}>
             <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{background:"#00D4FF"}}/>
-            Module IA Actif
+            AI Module Active
           </div>
-          <h2 className="text-6xl font-black italic tracking-tighter mb-2">Scan IA</h2>
-          <p className="text-white/55 text-base font-semibold mb-1">Photo de face · lumière naturelle · expression neutre</p>
-          <p className="text-white/30 text-[12px] mb-8">Cadre ton visage en entier, fond uni recommandé pour une précision maximale</p>
+          <h2 className="text-6xl font-black italic tracking-tighter mb-2">AI Scan</h2>
+          <p className="text-white/55 text-base font-semibold mb-1">Front-facing photo · natural light · neutral expression</p>
+          <p className="text-white/30 text-[12px] mb-8">Frame your entire face, solid background recommended for maximum precision</p>
 
           {/* Analysis card with glassmorphism */}
           <div className="relative w-full aspect-square rounded-3xl overflow-hidden mb-5 border" style={{borderColor:"rgba(255,255,255,0.06)",background:"rgba(255,255,255,0.01)",backdropFilter:"blur(10px)"}}>
@@ -646,16 +646,16 @@ export default function Home(){
                   <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M12 16.5v-9M8.25 12l3.75-3.75L15.75 12"/><path d="M3.75 18.75a2.25 2.25 0 002.25 2.25h12a2.25 2.25 0 002.25-2.25v-7.5A2.25 2.25 0 0018 9h-1.5a.75.75 0 01-.53-.22l-2.47-2.47A2.25 2.25 0 0011.91 6h-1.82A2.25 2.25 0 008.5 6.66l-2.47 2.47A.75.75 0 015.5 9H3.75A2.25 2.25 0 001.5 11.25v7.5"/></svg>
                 </div>
                 <div className="text-center">
-                  <p className="text-[15px] text-white/70 font-black uppercase tracking-widest mb-1">Déposer ta photo ici</p>
-                  <p className="text-[12px] text-white/45 font-semibold">ou clique pour importer depuis ta galerie</p>
-                  <p className="text-[10px] text-white/25 mt-2">JPG, PNG, HEIC · Face visible · Bonne luminosité</p>
+                  <p className="text-[15px] text-white/70 font-black uppercase tracking-widest mb-1">Drop your photo here</p>
+                  <p className="text-[12px] text-white/45 font-semibold">or click to import from your gallery</p>
+                  <p className="text-[10px] text-white/25 mt-2">JPG, PNG, HEIC · Face visible · Good lighting</p>
                 </div>
                 <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
               </label>
             )}
             {imageUrl&&!analyzing&&(
               <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center" style={{background:"rgba(0,0,0,0.4)"}}>
-                <span className="text-[10px] text-white font-black uppercase tracking-widest">Changer de photo</span>
+                <span className="text-[10px] text-white font-black uppercase tracking-widest">Change photo</span>
                 <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
               </label>
             )}
@@ -663,18 +663,18 @@ export default function Home(){
 
           {!imageUrl&&(
             <div className="mb-5 p-4 rounded-2xl text-center border" style={{background:"rgba(255,255,255,0.03)",borderColor:"rgba(0,212,255,0.1)"}}>
-              <p className="text-[13px] text-white/65 font-bold mb-1">📱 Scan depuis ton appareil</p>
-              <p className="text-[11px] text-white/40 leading-relaxed">Utilise la caméra frontale pour une photo nette. Évite le contre-jour et les flous. Fond uni pour une précision maximale.</p>
+              <p className="text-[13px] text-white/65 font-bold mb-1">📱 Scan from your device</p>
+              <p className="text-[11px] text-white/40 leading-relaxed">Use the front camera for a clear photo. Avoid backlighting and blur. Solid background for maximum precision.</p>
             </div>
           )}
 
           {error&&<div className="p-4 rounded-2xl mb-4 text-center border" style={{background:"rgba(239,68,68,0.06)",borderColor:"rgba(239,68,68,0.15)"}}><p className="text-red-400 text-sm font-bold">{error}</p></div>}
-          {loadingModels&&<p className="text-white/18 text-[10px] text-center font-black uppercase tracking-widest mb-4 animate-pulse">Chargement des modèles IA...</p>}
+          {loadingModels&&<p className="text-white/18 text-[10px] text-center font-black uppercase tracking-widest mb-4 animate-pulse">Loading AI models...</p>}
 
           <button onClick={runAnalysis} disabled={!imageEl||!modelsLoaded||analyzing} className={`w-full py-5 font-black text-[11px] uppercase tracking-[0.15em] rounded-2xl transition-all ${imageEl&&modelsLoaded&&!analyzing?"hover:scale-[1.01] text-white":"text-white/12 cursor-not-allowed"}`} style={imageEl&&modelsLoaded&&!analyzing?{background:"linear-gradient(135deg,#A855F7,#7c3aed,#00D4FF)",boxShadow:"0 0 40px rgba(168,85,247,0.3)"}:{background:"rgba(255,255,255,0.03)"}}>
-            {analyzing?"Analyse biométrique en cours...":"Lancer l'analyse IA"}
+            {analyzing?"Biometric analysis in progress...":"Launch AI analysis"}
           </button>
-          <p className="text-[9px] text-white/10 text-center mt-4">100% local · Aucune photo envoyée · Modèle IA embarqué</p>
+          <p className="text-[9px] text-white/10 text-center mt-4">100% local · No photo uploaded · Embedded AI model</p>
         </div>
       </main>
     );
@@ -684,7 +684,7 @@ export default function Home(){
   if(page==="results"&&results){
     const scoreColor = results.overall>=8?"#A855F7":results.overall>=6?"#00D4FF":"#7c3aed";
     const potColor = "#A855F7";
-    const isFemale=gender==="Femme";
+    const isFemale=gender==="Female";
     const filteredAdvice=advice.filter(a=>!a.femaleOnly||isFemale);
 
     // ── PRICING PAGE (no offer selected) ──────────────────────────────────
@@ -702,7 +702,7 @@ export default function Home(){
                 <BiometryGauge score={results.overall} potential={results.potential}/>
               </div>
               <div className="p-5 rounded-3xl space-y-3 border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)"}}>
-                {["Symétrie faciale","Tiers faciaux","Jawline","Yeux","Canthal tilt","Lèvres"].map((l,i)=>(
+                {["Facial symmetry","Facial thirds","Jawline","Eyes","Canthal tilt","Lips"].map((l,i)=>(
                   <div key={i} className="space-y-1">
                     <div className="flex justify-between"><span className="text-[10px] text-white/32">{l}</span><span className="text-[10px] font-black text-white/38">??/100</span></div>
                     <div className="h-[3px] rounded-full" style={{background:"rgba(255,255,255,0.08)"}}><div className="h-full rounded-full" style={{width:`${28+i*12}%`,background:"rgba(255,255,255,0.18)"}}/></div>
@@ -714,39 +714,39 @@ export default function Home(){
 
           {/* Pricing cards */}
           <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
-            <button onClick={reset} className="absolute top-5 left-5 text-white/25 hover:text-white/55 text-[9px] font-black uppercase tracking-widest transition-colors">← Accueil</button>
+            <button onClick={reset} className="absolute top-5 left-5 text-white/25 hover:text-white/55 text-[9px] font-black uppercase tracking-widest transition-colors">← Home</button>
 
             <div className="text-center mb-8">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border" style={{background:"radial-gradient(circle,rgba(168,85,247,0.28),rgba(168,85,247,0.05))",borderColor:"rgba(168,85,247,0.30)"}}>
                 <svg width="26" height="26" fill="none" stroke="#A855F7" strokeWidth="1.8"><rect x="3" y="11" width="18" height="11" rx="2.5"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
               </div>
-              <p className="text-[11px] font-black uppercase tracking-[0.2em] mb-1" style={{color:"#A855F7"}}>Ton analyse est prête</p>
-              <h3 className="text-3xl font-black text-white mb-2 tracking-tight">Accède à tes résultats</h3>
-              <p className="text-[12px] text-white/40 max-w-xs mx-auto leading-relaxed">Choisis le niveau d'analyse adapté à tes objectifs</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] mb-1" style={{color:"#A855F7"}}>Your analysis is ready</p>
+              <h3 className="text-3xl font-black text-white mb-2 tracking-tight">Access your results</h3>
+              <p className="text-[12px] text-white/40 max-w-xs mx-auto leading-relaxed">Choose the analysis level suited to your goals</p>
             </div>
 
             {/* 3 Pricing Cards */}
             <div className="w-full max-w-sm flex flex-col gap-4">
 
-              {/* STARTER — 1.99€ */}
+              {/* STARTER — $1.99 */}
               <div className="relative rounded-3xl p-6 overflow-hidden border" style={{background:"rgba(12,12,24,0.95)",borderColor:"rgba(255,255,255,0.10)",backdropFilter:"blur(20px)"}}>
                 <div className="absolute top-0 left-0 right-0 h-[1px]" style={{background:"linear-gradient(90deg,transparent,rgba(0,212,255,0.4),transparent)"}}/>
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Starter</p>
                     <div className="flex items-end gap-2">
-                      <span className="text-4xl font-black text-white tracking-tighter">1.99€</span>
+                      <span className="text-4xl font-black text-white tracking-tighter">$1.99</span>
                     </div>
                   </div>
                   <div className="text-2xl mt-1">📊</div>
                 </div>
                 <div className="space-y-2 mb-5">
                   {[
-                    {icon:"📊",t:"Ton score biométrique décimal",ok:true},
-                    {icon:"🏆",t:"Ton rang dans la population",ok:true},
-                    {icon:"🧬",t:"Analyse complète 50+ critères",ok:false},
-                    {icon:"💎",t:"Potentiel max IA personnalisé",ok:false},
-                    {icon:"📋",t:"Conseils personnalisés détaillés",ok:false},
+                    {icon:"📊",t:"Your decimal biometric score",ok:true},
+                    {icon:"🏆",t:"Your rank in the population",ok:true},
+                    {icon:"🧬",t:"Full 50+ criteria analysis",ok:false},
+                    {icon:"💎",t:"Personalized AI max potential",ok:false},
+                    {icon:"📋",t:"Detailed personalized tips",ok:false},
                   ].map((item,i)=>(
                     <div key={i} className={`flex items-center gap-2.5 ${item.ok?"opacity-100":"opacity-28"}`}>
                       <span className={`text-sm flex-shrink-0 ${!item.ok?"grayscale":""}`}>{item.icon}</span>
@@ -754,17 +754,17 @@ export default function Home(){
                     </div>
                   ))}
                 </div>
-                <a href="https://buy.stripe.com/aFa3cxgHv8et5Z924Z3ZK00" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#374151,#4b5563)"}}>
-                  Accéder — 1.99€
+                <a href="https://buy.stripe.com/28E9AV0Ix9ix3R16lf3ZK03" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#374151,#4b5563)"}}>
+                  Access — $1.99
                 </a>
               </div>
 
-              {/* DEEP DIVE — 6.99€ (TOP VENTES) */}
+              {/* DEEP DIVE — $6.99 (TOP VENTES) */}
               <div className="relative rounded-3xl p-6 overflow-hidden border-2" style={{background:"rgba(12,12,24,0.95)",borderColor:"rgba(168,85,247,0.45)",backdropFilter:"blur(20px)"}}>
                 {/* TOP VENTES badge */}
                 <div className="absolute -top-[1px] left-1/2 -translate-x-1/2">
                   <div className="px-4 py-1 text-[9px] font-black uppercase tracking-widest rounded-b-xl text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)"}}>
-                    🔥 TOP VENTES
+                    🔥 BEST SELLER
                   </div>
                 </div>
                 <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{background:"radial-gradient(ellipse 80% 50% at 50% -10%,rgba(168,85,247,0.12),transparent)"}}/>
@@ -773,7 +773,7 @@ export default function Home(){
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{color:"#A855F7"}}>Deep Dive</p>
                     <div className="flex items-end gap-2">
-                      <span className="text-4xl font-black text-white tracking-tighter">6.99€</span>
+                      <span className="text-4xl font-black text-white tracking-tighter">$9.99</span>
                     </div>
                   </div>
                   <div className="text-2xl mt-1">🧬</div>
@@ -781,8 +781,8 @@ export default function Home(){
 
                 {/* Key promise banner */}
                 <div className="mb-4 p-3 rounded-2xl border" style={{background:"rgba(168,85,247,0.08)",borderColor:"rgba(168,85,247,0.20)"}}>
-                  <p className="text-[11px] font-black text-white/85 leading-snug mb-0.5">⚡ Résultats visibles dès <span style={{color:"#A855F7"}}>24h</span> si les conseils sont appliqués</p>
-                  <p className="text-[9px] text-white/40">Du plus soft au plus avancé — chaque conseil adapté à ton profil</p>
+                  <p className="text-[11px] font-black text-white/85 leading-snug mb-0.5">⚡ Visible results from <span style={{color:"#A855F7"}}>24h</span> if tips are applied</p>
+                  <p className="text-[9px] text-white/40">From the softest to most advanced — every tip adapted to your profile</p>
                 </div>
 
                 {/* Advice count highlight */}
@@ -794,29 +794,29 @@ export default function Home(){
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[8px]">🌿</span>
-                      <span className="text-[9px] text-white/45">Soft : skincare, hydratation, sommeil</span>
+                      <span className="text-[9px] text-white/45">Soft: skincare, hydration, sleep</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[8px]">💪</span>
-                      <span className="text-[9px] text-white/45">Moyen : exercices faciaux, mewing, chewing</span>
+                      <span className="text-[9px] text-white/45">Medium: facial exercises, mewing, chewing</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[8px]">🔥</span>
-                      <span className="text-[9px] text-white/45">Avancé : recomposition, routine complète</span>
+                      <span className="text-[9px] text-white/45">Advanced: recomposition, full routine</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2 mb-5">
                   {[
-                    {icon:"📊",t:"Score biométrique décimal complet"},
-                    {icon:"🏆",t:"Rang dans la population"},
-                    {icon:"🧬",t:"Analyse complète 50+ critères"},
-                    {icon:"💎",t:"Potentiel max IA personnalisé"},
-                    {icon:"📋",t:`${filteredAdvice.length}+ conseils classés par impact`},
-                    {icon:"🌿",t:"Du plus soft au plus poussé"},
-                    {icon:"📅",t:"Guide de progression 30 jours"},
-                    {icon:"🛒",t:"Produits recommandés par conseil"},
+                    {icon:"📊",t:"Complete decimal biometric score"},
+                    {icon:"🏆",t:"Population ranking"},
+                    {icon:"🧬",t:"Full 50+ criteria analysis"},
+                    {icon:"💎",t:"Personalized AI max potential"},
+                    {icon:"📋",t:`${filteredAdvice.length}+ tips ranked by impact`},
+                    {icon:"🌿",t:"From softest to most advanced"},
+                    {icon:"📅",t:"30-day progression guide"},
+                    {icon:"🛒",t:"Recommended products per tip"},
                   ].map((item,i)=>(
                     <div key={i} className="flex items-center gap-2.5">
                       <span className="text-sm flex-shrink-0">{item.icon}</span>
@@ -825,12 +825,12 @@ export default function Home(){
                     </div>
                   ))}
                 </div>
-                <a href="https://buy.stripe.com/7sY8wRdvjeCRdrBbFz3ZK01" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[12px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 40px rgba(168,85,247,0.4)"}}>
-                  ⚡ Tout débloquer — 6.99€
+                <a href="https://buy.stripe.com/4gMdRb76VgKZfzJ24Z3ZK04" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[12px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 40px rgba(168,85,247,0.4)"}}>
+                  ⚡ Unlock everything — $9.99
                 </a>
               </div>
 
-              {/* ELITE — 14.99€ */}
+              {/* ELITE — $14.99 */}
               <div className="relative rounded-3xl p-6 overflow-hidden border" style={{background:"rgba(12,12,24,0.95)",borderColor:"rgba(0,212,255,0.25)",backdropFilter:"blur(20px)"}}>
                 <div className="absolute top-0 left-0 right-0 h-[1px]" style={{background:"linear-gradient(90deg,transparent,rgba(0,212,255,0.6),transparent)"}}/>
                 <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{background:"radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,212,255,0.07),transparent)"}}/>
@@ -838,7 +838,7 @@ export default function Home(){
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{color:"#00D4FF"}}>Elite</p>
                     <div className="flex items-end gap-2">
-                      <span className="text-4xl font-black text-white tracking-tighter">14.99€</span>
+                      <span className="text-4xl font-black text-white tracking-tighter">$19.99</span>
                     </div>
                   </div>
                   <div className="text-2xl mt-1">👑</div>
@@ -846,18 +846,18 @@ export default function Home(){
 
                 {/* Elite promise banner */}
                 <div className="mb-4 p-3 rounded-2xl border" style={{background:"rgba(0,212,255,0.07)",borderColor:"rgba(0,212,255,0.18)"}}>
-                  <p className="text-[11px] font-black text-white/85 leading-snug mb-0.5">🤖 Potentiel max <span style={{color:"#00D4FF"}}>10/10</span> simulé par morphing IA</p>
-                  <p className="text-[9px] text-white/40">Visualise ta transformation avant de commencer</p>
+                  <p className="text-[11px] font-black text-white/85 leading-snug mb-0.5">🤖 Potential max <span style={{color:"#00D4FF"}}>10/10</span> simulated by AI morphing</p>
+                  <p className="text-[9px] text-white/40">Visualize your transformation before you start</p>
                 </div>
 
                 <div className="space-y-2 mb-4">
                   {[
-                    {icon:"🧬",t:"Tout Deep Dive inclus (conseils complets)"},
-                    {icon:"🤖",t:"Morphing IA — Simulation visuelle 10/10"},
-                    {icon:"👑",t:"Potentiel max 10/10 calculé"},
-                    {icon:"🎯",t:"Plan de transformation ultra-personnalisé"},
-                    {icon:"🔬",t:"Rapport biométrique premium PDF"},
-                    {icon:"⚡",t:"Résultats dès 24h — conseils prioritaires"},
+                    {icon:"🧬",t:"All Deep Dive included (full tips)"},
+                    {icon:"🤖",t:"AI Morphing — Visual 10/10 simulation"},
+                    {icon:"👑",t:"Max 10/10 potential calculated"},
+                    {icon:"🎯",t:"Ultra-personalized transformation plan"},
+                    {icon:"🔬",t:"Premium biometric PDF report"},
+                    {icon:"⚡",t:"Results from 24h — priority tips"},
                   ].map((item,i)=>(
                     <div key={i} className="flex items-center gap-2.5">
                       <span className="text-sm flex-shrink-0">{item.icon}</span>
@@ -866,12 +866,12 @@ export default function Home(){
                     </div>
                   ))}
                 </div>
-                <a href="https://buy.stripe.com/00wcN7ezn52h5Z98tn3ZK02" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#0891b2,#00D4FF)",boxShadow:"0 0 30px rgba(0,212,255,0.3)"}}>
-                  👑 Accès Elite — 14.99€
+                <a href="https://buy.stripe.com/6oU3cx76V2U91IT3933ZK05" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#0891b2,#00D4FF)",boxShadow:"0 0 30px rgba(0,212,255,0.3)"}}>
+                  👑 Elite Access — $19.99
                 </a>
               </div>
 
-              <p className="text-[9px] text-white/15 text-center mt-1">Accès immédiat · Paiement sécurisé Stripe · Paiement unique</p>
+              <p className="text-[9px] text-white/15 text-center mt-1">Immediate access · Secure Stripe payment · One-time payment</p>
             </div>
           </div>
         </main>
@@ -888,24 +888,24 @@ export default function Home(){
 
         <div className="relative z-10 w-full max-w-sm">
           <div className="flex items-center justify-between mb-10">
-            <button onClick={reset} className="text-white/20 hover:text-white/50 text-[10px] font-black uppercase tracking-[0.15em] transition-colors">← Accueil</button>
-            <span className="text-[9px] text-white/15 font-bold uppercase tracking-wider">{gender} · {age} ans</span>
+            <button onClick={reset} className="text-white/20 hover:text-white/50 text-[10px] font-black uppercase tracking-[0.15em] transition-colors">← Home</button>
+            <span className="text-[9px] text-white/15 font-bold uppercase tracking-wider">{gender} · {age} yo</span>
           </div>
 
           {/* Glassmorphism Analysis Card */}
           <div className="p-7 rounded-3xl mb-4 text-center border glow-card" style={{background:"rgba(255,255,255,0.025)",borderColor:"rgba(168,85,247,0.15)",backdropFilter:"blur(10px)"}}>
-            <div className="text-[8px] font-black uppercase tracking-[0.2em] mb-3" style={{color:"#00D4FF"}}>🔬 Analyse Biométrique Complète</div>
+            <div className="text-[8px] font-black uppercase tracking-[0.2em] mb-3" style={{color:"#00D4FF"}}>🔬 Complete Biometric Analysis</div>
             <BiometryGauge score={results.overall} potential={showDeepDive?results.potential:results.overall}/>
             <div className="flex items-center justify-center gap-5 mt-3">
-              <div className="flex items-center gap-1.5"><div className="w-5 h-[2px] bg-white rounded-full"/><span className="text-[8px] text-white/22 font-bold uppercase tracking-wider">Score actuel</span></div>
-              {showDeepDive&&results.potential>results.overall&&<div className="flex items-center gap-1.5"><div className="w-5 border-t border-dashed border-white/18"/><span className="text-[8px] text-white/22 font-bold uppercase tracking-wider">Potentiel</span></div>}
+              <div className="flex items-center gap-1.5"><div className="w-5 h-[2px] bg-white rounded-full"/><span className="text-[8px] text-white/22 font-bold uppercase tracking-wider">Current Score</span></div>
+              {showDeepDive&&results.potential>results.overall&&<div className="flex items-center gap-1.5"><div className="w-5 border-t border-dashed border-white/18"/><span className="text-[8px] text-white/22 font-bold uppercase tracking-wider">Potential</span></div>}
             </div>
           </div>
 
           {/* Score cards */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="p-4 rounded-2xl border" style={{borderColor:scoreColor+"22",background:scoreColor+"08"}}>
-              <p className="text-[8px] font-bold text-white/22 uppercase tracking-wider mb-1">Score actuel</p>
+              <p className="text-[8px] font-bold text-white/22 uppercase tracking-wider mb-1">Current Score</p>
               <p className="text-3xl font-black italic" style={{color:scoreColor}}>{results.overall.toFixed(1)}</p>
               <p className="text-[8px] text-white/18 mt-0.5">/ 10.0</p>
             </div>
@@ -918,9 +918,9 @@ export default function Home(){
               )}
               {showDeepDive&&(
                 <>
-                  <p className="text-[8px] font-bold text-white/22 uppercase tracking-wider mb-1">Potentiel max</p>
+                  <p className="text-[8px] font-bold text-white/22 uppercase tracking-wider mb-1">Potential max</p>
                   <p className="text-3xl font-black italic" style={{color:potColor}}>{results.potential.toFixed(1)}</p>
-                  <p className="text-[8px] text-white/18 mt-0.5">Atteignable</p>
+                  <p className="text-[8px] text-white/18 mt-0.5">Achievable</p>
                 </>
               )}
             </div>
@@ -929,8 +929,8 @@ export default function Home(){
           {/* Summary */}
           <div className="p-4 rounded-2xl mb-5 border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)"}}>
             <p className="text-[12px] text-white/48 leading-relaxed">
-              Score biométrique : <span className="font-black text-white">{results.overall.toFixed(1)}/10</span> analysé sur <span className="font-black" style={{color:"#00D4FF"}}>50+ points faciaux</span>.{" "}
-              {showDeepDive&&results.potential>results.overall?<>Potentiel IA : <span className="font-black" style={{color:"#A855F7"}}>{results.potential.toFixed(1)}</span>. Premiers résultats en <span className="font-black text-white">72h</span>.</>:""}
+              Biometric score: <span className="font-black text-white">{results.overall.toFixed(1)}/10</span> analyzed from <span className="font-black" style={{color:"#00D4FF"}}>50+ facial points</span>.{" "}
+              {showDeepDive&&results.potential>results.overall?<>Potential IA : <span className="font-black" style={{color:"#A855F7"}}>{results.potential.toFixed(1)}</span>. First results in <span className="font-black text-white">72h</span>.</>:""}
             </p>
           </div>
 
@@ -938,7 +938,7 @@ export default function Home(){
           <div className="flex gap-1 p-1 rounded-2xl mb-4 border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)"}}>
             {(["scores","potential","advice"] as const).map(tab=>(
               <button key={tab} onClick={()=>setActiveTab(tab)} className={`flex-1 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all relative ${activeTab===tab?"bg-white text-black":"text-white/22 hover:text-white/45"}`}>
-                {tab==="scores"?"Scores":tab==="potential"?"Potentiel":`Conseils (${filteredAdvice.length})`}
+                {tab==="scores"?"Scores":tab==="potential"?"Potential":`Conseils (${filteredAdvice.length})`}
                 {!showDeepDive&&(tab==="potential"||tab==="advice")&&<span className="absolute -top-1 -right-1 text-[8px]">🔒</span>}
               </button>
             ))}
@@ -946,14 +946,14 @@ export default function Home(){
 
           {activeTab==="scores"&&(
             <div className="p-5 rounded-3xl space-y-4 mb-4 border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)",backdropFilter:"blur(10px)"}}>
-              <h3 className="text-[9px] font-black text-white/20 uppercase tracking-widest">Critères biométriques · 50+ points analysés</h3>
-              <ScoreBar label="Symétrie faciale" value={results.symmetry} color="#A855F7"/>
-              <ScoreBar label="Tiers faciaux doriens" value={results.facialThirds} color="#9333ea"/>
-              <ScoreBar label="Jawline mandibulaire" value={results.jawlineScore} color="#00D4FF"/>
-              <ScoreBar label="Score yeux" value={results.eyeScore} color="#22d3ee"/>
-              <ScoreBar label="Canthal tilt orbital" value={results.canthalTilt} color="#34d399"/>
-              <ScoreBar label="Ratio labial" value={results.lipScore} color="#f472b6"/>
-              <ScoreBar label="Qualité détection" value={results.skinScore} color="#fbbf24"/>
+              <h3 className="text-[9px] font-black text-white/20 uppercase tracking-widest">Biometric criteria · 50+ points analyzed</h3>
+              <ScoreBar label="Facial Symmetry" value={results.symmetry} color="#A855F7"/>
+              <ScoreBar label="Dorian Facial Thirds" value={results.facialThirds} color="#9333ea"/>
+              <ScoreBar label="Mandibular Jawline" value={results.jawlineScore} color="#00D4FF"/>
+              <ScoreBar label="Eye Score" value={results.eyeScore} color="#22d3ee"/>
+              <ScoreBar label="Orbital Canthal Tilt" value={results.canthalTilt} color="#34d399"/>
+              <ScoreBar label="Lip Ratio" value={results.lipScore} color="#f472b6"/>
+              <ScoreBar label="Detection Quality" value={results.skinScore} color="#fbbf24"/>
             </div>
           )}
 
@@ -961,22 +961,22 @@ export default function Home(){
             !showDeepDive?(
               <div className="p-6 rounded-3xl mb-4 text-center border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)"}}>
                 <div className="text-4xl mb-3">🔒</div>
-                <p className="text-[14px] font-black text-white/60 mb-2">Potentiel verrouillé</p>
-                <p className="text-[11px] text-white/35 mb-5 leading-relaxed">Disponible à partir de l'offre Deep Dive. Découvre jusqu'où tu peux aller avec les bons efforts.</p>
+                <p className="text-[14px] font-black text-white/60 mb-2">Potential locked</p>
+                <p className="text-[11px] text-white/35 mb-5 leading-relaxed">Available from the Deep Dive offer. Discover how far you can go with the right efforts.</p>
                 <button onClick={()=>setOfferUnlocked(null)} className="w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 30px rgba(168,85,247,0.3)"}}>
-                  🔓 Voir les offres
+                  🔓 View offers
                 </button>
               </div>
             ):(
               <div className="p-5 rounded-3xl space-y-5 mb-4 border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)",backdropFilter:"blur(10px)"}}>
-                <h3 className="text-[9px] font-black text-white/20 uppercase tracking-widest">Progression par critère biométrique</h3>
+                <h3 className="text-[9px] font-black text-white/20 uppercase tracking-widest">Progression by biometric criterion</h3>
                 {[
-                  {label:"Symétrie",current:results.symmetry,gain:8,note:"Mewing + posture"},
-                  {label:"Tiers faciaux",current:results.facialThirds,gain:12,note:"Mewing long terme"},
+                  {label:"Symmetry",current:results.symmetry,gain:8,note:"Mewing + posture"},
+                  {label:"Facial thirds",current:results.facialThirds,gain:12,note:"Long-term mewing"},
                   {label:"Jawline",current:results.jawlineScore,gain:20,note:"BF% + chewing + mewing"},
-                  {label:"Yeux",current:results.eyeScore,gain:5,note:"Peu améliorable (génétique)"},
-                  {label:"Canthal tilt",current:results.canthalTilt,gain:isFemale?8:5,note:isFemale?"Fox eye makeup":"Peu améliorable"},
-                  {label:"Lèvres",current:results.lipScore,gain:15,note:"Hydratation + soin"},
+                  {label:"Eyes",current:results.eyeScore,gain:5,note:"Hard to improve (genetics)"},
+                  {label:"Canthal tilt",current:results.canthalTilt,gain:isFemale?8:5,note:isFemale?"Fox eye makeup":"Hard to improve"},
+                  {label:"Lips",current:results.lipScore,gain:15,note:"Hydration + care"},
                 ].map((item,i)=>{
                   const maxVal=Math.min(item.current+item.gain,100);
                   return(
@@ -1001,15 +1001,15 @@ export default function Home(){
             !showDeepDive?(
               <div className="p-6 rounded-3xl mb-4 text-center border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)"}}>
                 <div className="text-4xl mb-3">🎯</div>
-                <p className="text-[14px] font-black text-white/60 mb-2">Conseils verrouillés</p>
-                <p className="text-[11px] text-white/35 mb-5 leading-relaxed">{filteredAdvice.length} conseils personnalisés classés par impact, avec gains attendus et délais concrets.</p>
+                <p className="text-[14px] font-black text-white/60 mb-2">Tips locked</p>
+                <p className="text-[11px] text-white/35 mb-5 leading-relaxed">{filteredAdvice.length} personalized tips ranked by impact, with expected gains and concrete timelines.</p>
                 <button onClick={()=>setOfferUnlocked(null)} className="w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 30px rgba(168,85,247,0.3)"}}>
-                  🔓 Voir les offres
+                  🔓 View offers
                 </button>
               </div>
             ):(
               <div className="space-y-2 mb-4">
-                <p className="text-[8px] text-white/16 uppercase tracking-widest font-black">{filteredAdvice.length} conseils · impact décroissant</p>
+                <p className="text-[8px] text-white/16 uppercase tracking-widest font-black">{filteredAdvice.length} tips · decreasing impact</p>
                 {filteredAdvice.map((a,i)=>{
                   const links=AMAZON_LINKS[a.category]||[];
                   const isOpen=expandedAdvice===i;
@@ -1035,7 +1035,7 @@ export default function Home(){
                           <p className="text-[11px] text-white/38 leading-relaxed whitespace-pre-line mb-4">{a.description}</p>
                           {links.length>0&&(
                             <div className="space-y-1">
-                              <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-2">🛒 Produits recommandés</p>
+                              <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-2">🛒 Recommended products</p>
                               {links.map((lk,j)=>(
                                 <a key={j} href={lk.url} target="_blank" rel="noopener noreferrer"
                                   className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl transition-all group border" style={{borderColor:"rgba(255,255,255,0.06)",background:"rgba(255,255,255,0.02)"}}>
@@ -1055,10 +1055,10 @@ export default function Home(){
           )}
 
           <div className="mt-4 space-y-3">
-            <button onClick={()=>setPage("analysis")} className="w-full py-4 bg-white text-black font-black text-[10px] uppercase tracking-[0.15em] rounded-2xl hover:scale-[1.01] transition-all">Nouvelle analyse</button>
-            <button onClick={()=>{navigator.clipboard.writeText(`Mon score biométrique : ${results.overall.toFixed(1)}/10 — via BioMetry Lab`);alert("✓ Copié !");}} className="w-full py-4 font-black text-[10px] uppercase tracking-[0.15em] rounded-2xl transition-all border" style={{background:"rgba(255,255,255,0.025)",color:"rgba(255,255,255,0.22)",borderColor:"rgba(255,255,255,0.04)"}}>Partager mon score</button>
+            <button onClick={()=>setPage("analysis")} className="w-full py-4 bg-white text-black font-black text-[10px] uppercase tracking-[0.15em] rounded-2xl hover:scale-[1.01] transition-all">New analysis</button>
+            <button onClick={()=>{navigator.clipboard.writeText(`My biometric score: ${results.overall.toFixed(1)}/10 — via BioMetry Lab`);alert("✓ Copied!");}} className="w-full py-4 font-black text-[10px] uppercase tracking-[0.15em] rounded-2xl transition-all border" style={{background:"rgba(255,255,255,0.025)",color:"rgba(255,255,255,0.22)",borderColor:"rgba(255,255,255,0.04)"}}>Share my score</button>
           </div>
-          <p className="text-[8px] text-white/7 text-center mt-6">Analyse biométrique · Résultats indicatifs · Pas un jugement de valeur</p>
+          <p className="text-[8px] text-white/7 text-center mt-6">Biometric analysis · Indicative results · Not a value judgment</p>
         </div>
       </main>
     );
@@ -1066,4 +1066,6 @@ export default function Home(){
 
   return null;
 }
+
+
 
