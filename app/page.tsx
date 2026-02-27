@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import * as faceapi from "@vladmandic/face-api";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let faceapi: any = null;
 
 // ─── TYPES ────────────────────────────────────────────────────────────────────
 type AppPage = "landing" | "form" | "analysis" | "results" | "products";
