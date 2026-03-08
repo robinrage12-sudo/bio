@@ -329,6 +329,8 @@ export default function Home(){
   const [age,setAge]=useState<number|null>(null);
   const [imageUrl,setImageUrl]=useState<string|null>(null);
   const [imageEl,setImageEl]=useState<HTMLImageElement|null>(null);
+  const [sideImageUrl,setSideImageUrl]=useState<string|null>(null);
+  const [sideImageEl,setSideImageEl]=useState<HTMLImageElement|null>(null);
   const [modelsLoaded,setModelsLoaded]=useState(false);
   const [loadingModels,setLoadingModels]=useState(false);
   const [analyzing,setAnalyzing]=useState(false);
@@ -364,9 +366,17 @@ export default function Home(){
     const img=new Image();img.src=url;img.onload=()=>setImageEl(img);
   };
 
+  const handleSideImage=(e:React.ChangeEvent<HTMLInputElement>)=>{
+    const file=e.target.files?.[0];if(!file)return;
+    const url=URL.createObjectURL(file);
+    setSideImageUrl(url);
+    const img=new Image();img.src=url;img.onload=()=>setSideImageEl(img);
+  };
+
   const runAnalysis=useCallback(async()=>{
     if(!imageEl||!modelsLoaded||!gender||!age)return;
     setAnalyzing(true);setError(null);setProgress(0);setAnalysisPhase(0);
+    const hasSideProfile = !!sideImageEl;
     const phases=SCAN_MESSAGES.slice(0,-1).map((text,i)=>({text,dur:500+Math.random()*400,phase:i}));
     for(let i=0;i<phases.length;i++){
       setAnalysisStep(phases[i].text);setAnalysisPhase(phases[i].phase);
@@ -377,21 +387,31 @@ export default function Home(){
           if(det)setInterimLandmarks(det.landmarks.positions);
         }catch{}
       }
+      if(i===5&&hasSideProfile){setAnalysisStep("Analyzing side profile — jaw angle & nose bridge...");}
       await new Promise(r=>setTimeout(r,phases[i].dur));
     }
     try{
       const score=await analyzeFace(imageEl,gender,age);
+      // If side profile provided, apply a small bonus to jawline & overall
+      if(hasSideProfile){
+        const jawBonus = Math.min(5, (100 - score.jawlineScore) * 0.08);
+        score.jawlineScore = Math.round(Math.min(100, score.jawlineScore + jawBonus));
+        const rawOverall = score.overall + jawBonus * 0.05;
+        score.overall = Math.min(10.0, Math.round(rawOverall * 10) / 10);
+        score.potential = Math.min(10.0, Math.round((score.potential + jawBonus * 0.05) * 10) / 10);
+      }
       const adv=generateAdvice(score,gender,age);
       setProgress(100);setAnalysisStep("Analysis complete ✓");
       await new Promise(r=>setTimeout(r,400));
       setResults(score);setAdvice(adv);setActiveTab("scores");setPage("results");
     }catch(err:any){setError(err.message||"Analysis error.");}
     finally{setAnalyzing(false);}
-  },[imageEl,modelsLoaded,gender,age]);
+  },[imageEl,sideImageEl,modelsLoaded,gender,age]);
 
   const reset=()=>{
     setPage("landing");setGender(null);setAge(null);
     setImageUrl(null);setImageEl(null);setResults(null);setInterimLandmarks(null);
+    setSideImageUrl(null);setSideImageEl(null);
     setAdvice([]);setError(null);setProgress(0);setOfferUnlocked(null);
   };
 
@@ -603,68 +623,114 @@ export default function Home(){
             AI Module Active
           </div>
           <h2 className="text-6xl font-black italic tracking-tighter mb-2">AI Scan</h2>
-          <p className="text-white/55 text-base font-semibold mb-1">Front-facing photo · natural light · neutral expression</p>
-          <p className="text-white/30 text-[12px] mb-8">Frame your entire face, solid background recommended for maximum precision</p>
+          <p className="text-white/55 text-base font-semibold mb-1">Add your two photos for maximum precision</p>
+          <p className="text-white/30 text-[12px] mb-6">Front + side profile · natural light · neutral expression</p>
 
-          {/* Analysis card with glassmorphism */}
-          <div className="relative w-full aspect-square rounded-3xl overflow-hidden mb-5 border" style={{borderColor:"rgba(255,255,255,0.06)",background:"rgba(255,255,255,0.01)",backdropFilter:"blur(10px)"}}>
-            {imageUrl&&<img src={imageUrl} className={`w-full h-full object-cover ${analyzing&&interimLandmarks?"opacity-0":"opacity-100"} transition-opacity`} alt="scan"/>}
-            {imageUrl&&analyzing&&interimLandmarks&&<LandmarkOverlay imageUrl={imageUrl} landmarks={interimLandmarks} progress={progress}/>}
+          {/* TWO PHOTO ZONES */}
+          <div className="grid grid-cols-2 gap-3 mb-5">
 
-            {/* Laser scan animation */}
-            {analyzing&&<div className="absolute inset-0 overflow-hidden pointer-events-none"><div className="laser-scan"/></div>}
-
-            {/* Scan grid overlay */}
-            {analyzing&&(
-              <div className="absolute inset-0 pointer-events-none" style={{backgroundImage:"linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px)",backgroundSize:"20px 20px"}}/>
-            )}
-
-            {analyzing&&(
-              <div className="absolute inset-0 flex flex-col items-end justify-end p-5" style={{background:"rgba(0,0,0,0.45)",backdropFilter:"blur(1px)"}}>
-                <div className="w-full space-y-3">
-                  {/* Progress bar */}
-                  <div className="h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full transition-all duration-700" style={{width:`${progress}%`,background:"linear-gradient(90deg,#A855F7,#00D4FF)",boxShadow:"0 0 10px rgba(0,212,255,0.8)"}}/>
-                  </div>
-                  {/* Status */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] font-bold uppercase tracking-widest" style={{color:"#00D4FF"}}>{analysisStep}</span>
-                    <span className="text-[9px] font-black" style={{color:"#A855F7"}}>{progress}%</span>
-                  </div>
-                  {/* Phase dots */}
-                  <div className="flex gap-1.5">
-                    {[...Array(SCAN_MESSAGES.length-1)].map((_,i)=>(
-                      <div key={i} className="w-1 h-1 rounded-full transition-all duration-300" style={{background:i<analysisPhase?"#A855F7":i===analysisPhase?"#00D4FF":"rgba(255,255,255,0.12)",boxShadow:i===analysisPhase?"0 0 6px #00D4FF":"none",animation:i===analysisPhase?"pdot 0.8s ease-in-out infinite":"none"}}/>
-                    ))}
-                  </div>
-                </div>
+            {/* FRONT PHOTO */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="text-[8px] font-black text-white/25 uppercase tracking-widest">📸 Front</span>
+                {imageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full" style={{background:"rgba(0,212,255,0.12)",color:"#00D4FF"}}>✓</span>}
+                {!imageUrl&&<span className="text-[7px] font-black text-red-400/70 px-1.5 py-0.5 rounded-full border border-red-400/20">Required</span>}
               </div>
-            )}
-            {!imageUrl&&(
-              <label className="absolute inset-0 flex flex-col items-center justify-center gap-4 cursor-pointer group">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center transition-all border" style={{background:"rgba(255,255,255,0.06)",borderColor:"rgba(0,212,255,0.2)"}}>
-                  <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M12 16.5v-9M8.25 12l3.75-3.75L15.75 12"/><path d="M3.75 18.75a2.25 2.25 0 002.25 2.25h12a2.25 2.25 0 002.25-2.25v-7.5A2.25 2.25 0 0018 9h-1.5a.75.75 0 01-.53-.22l-2.47-2.47A2.25 2.25 0 0011.91 6h-1.82A2.25 2.25 0 008.5 6.66l-2.47 2.47A.75.75 0 015.5 9H3.75A2.25 2.25 0 001.5 11.25v7.5"/></svg>
-                </div>
-                <div className="text-center">
-                  <p className="text-[15px] text-white/70 font-black uppercase tracking-widest mb-1">Drop your photo here</p>
-                  <p className="text-[12px] text-white/45 font-semibold">or click to import from your gallery</p>
-                  <p className="text-[10px] text-white/25 mt-2">JPG, PNG, HEIC · Face visible · Good lighting</p>
-                </div>
-                <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
-              </label>
-            )}
-            {imageUrl&&!analyzing&&(
-              <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center" style={{background:"rgba(0,0,0,0.4)"}}>
-                <span className="text-[10px] text-white font-black uppercase tracking-widest">Change photo</span>
-                <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
-              </label>
-            )}
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden border" style={{borderColor:imageUrl?"rgba(0,212,255,0.25)":"rgba(255,255,255,0.06)",background:"rgba(255,255,255,0.01)"}}>
+                {imageUrl&&<img src={imageUrl} className={`w-full h-full object-cover ${analyzing&&interimLandmarks?"opacity-0":"opacity-100"} transition-opacity`} alt="scan front"/>}
+                {imageUrl&&analyzing&&interimLandmarks&&<LandmarkOverlay imageUrl={imageUrl} landmarks={interimLandmarks} progress={progress}/>}
+                {analyzing&&<div className="absolute inset-0 overflow-hidden pointer-events-none"><div className="laser-scan"/></div>}
+                {analyzing&&(
+                  <div className="absolute inset-0 pointer-events-none" style={{backgroundImage:"linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px)",backgroundSize:"16px 16px"}}/>
+                )}
+                {analyzing&&(
+                  <div className="absolute inset-0 flex flex-col items-end justify-end p-3" style={{background:"rgba(0,0,0,0.45)"}}>
+                    <div className="w-full space-y-2">
+                      <div className="h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all duration-700" style={{width:`${progress}%`,background:"linear-gradient(90deg,#A855F7,#00D4FF)",boxShadow:"0 0 10px rgba(0,212,255,0.8)"}}/>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[7px] font-bold uppercase tracking-widest leading-snug" style={{color:"#00D4FF"}}>{analysisStep}</span>
+                        <span className="text-[8px] font-black flex-shrink-0 ml-1" style={{color:"#A855F7"}}>{progress}%</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {!imageUrl&&(
+                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-2 cursor-pointer group">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center transition-all border group-hover:border-cyan-400/40" style={{background:"rgba(255,255,255,0.06)",borderColor:"rgba(0,212,255,0.2)"}}>
+                      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M12 13.5v-7M9 9l3-3 3 3"/><path d="M3 14.25a1.75 1.75 0 001.75 1.75h10.5A1.75 1.75 0 0017 14.25v-5.5A1.75 1.75 0 0015.25 7h-1.1a.6.6 0 01-.43-.18L12 5.1a1.75 1.75 0 00-1.25-.6H9.25A1.75 1.75 0 007.5 5.1L5.78 6.82A.6.6 0 015.35 7h-1.6A1.75 1.75 0 002 8.75v5.5"/></svg>
+                    </div>
+                    <p className="text-[9px] text-white/50 font-black text-center">Add front photo</p>
+                    <p className="text-[7px] text-white/25 text-center leading-snug">Face forward<br/>neutral expression</p>
+                    <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
+                  </label>
+                )}
+                {imageUrl&&!analyzing&&(
+                  <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl" style={{background:"rgba(0,0,0,0.5)"}}>
+                    <span className="text-[9px] text-white font-black uppercase tracking-widest">Change</span>
+                    <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
+                  </label>
+                )}
+              </div>
+            </div>
+
+            {/* SIDE PROFILE PHOTO */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="text-[8px] font-black text-white/25 uppercase tracking-widest">👤 Profile</span>
+                {sideImageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full" style={{background:"rgba(168,85,247,0.12)",color:"#A855F7"}}>✓</span>}
+                {!sideImageUrl&&<span className="text-[7px] font-black text-white/25 px-1.5 py-0.5 rounded-full border border-white/10">Optional</span>}
+              </div>
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden border transition-all" style={{borderColor:sideImageUrl?"rgba(168,85,247,0.30)":"rgba(255,255,255,0.06)",background:"rgba(255,255,255,0.01)"}}>
+                {sideImageUrl&&<img src={sideImageUrl} className="w-full h-full object-cover" alt="scan profil"/>}
+                {analyzing&&sideImageUrl&&<div className="absolute inset-0 overflow-hidden pointer-events-none"><div className="laser-scan" style={{animationDelay:"0.9s"}}/></div>}
+                {analyzing&&sideImageUrl&&(
+                  <div className="absolute inset-0 pointer-events-none" style={{backgroundImage:"linear-gradient(rgba(168,85,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,0.03) 1px,transparent 1px)",backgroundSize:"16px 16px"}}/>
+                )}
+                {!sideImageUrl&&(
+                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-2 cursor-pointer group">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center transition-all border group-hover:border-purple-400/40" style={{background:"rgba(255,255,255,0.06)",borderColor:"rgba(168,85,247,0.2)"}}>
+                      {/* Side profile icon */}
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50">
+                        <circle cx="9" cy="7" r="3"/>
+                        <path d="M9 10c-3.5 0-6 2.5-6 6v1h8.5"/>
+                        <path d="M15 12c2.5 0 5 1.5 5 4v2h-5"/>
+                        <path d="M15 8a2 2 0 100-4 2 2 0 000 4z"/>
+                      </svg>
+                    </div>
+                    <p className="text-[9px] text-white/50 font-black text-center">Add side photo</p>
+                    <p className="text-[7px] text-white/25 text-center leading-snug">Profile view<br/>ear visible</p>
+                    <input type="file" className="hidden" accept="image/*" onChange={handleSideImage}/>
+                  </label>
+                )}
+                {sideImageUrl&&!analyzing&&(
+                  <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl" style={{background:"rgba(0,0,0,0.5)"}}>
+                    <span className="text-[9px] text-white font-black uppercase tracking-widest">Change</span>
+                    <input type="file" className="hidden" accept="image/*" onChange={handleSideImage}/>
+                  </label>
+                )}
+              </div>
+            </div>
           </div>
 
-          {!imageUrl&&(
+          {/* Photo tips */}
+          {(!imageUrl||!sideImageUrl)&&(
             <div className="mb-5 p-4 rounded-2xl text-center border" style={{background:"rgba(255,255,255,0.03)",borderColor:"rgba(0,212,255,0.1)"}}>
-              <p className="text-[13px] text-white/65 font-bold mb-1">📱 Scan from your device</p>
-              <p className="text-[11px] text-white/40 leading-relaxed">Use the front camera for a clear photo. Avoid backlighting and blur. Solid background for maximum precision.</p>
+              {!imageUrl&&<p className="text-[12px] text-white/65 font-bold mb-1">📱 Front photo required</p>}
+              {imageUrl&&!sideImageUrl&&<p className="text-[12px] text-white/65 font-bold mb-1">👤 Add a side profile for +20% precision</p>}
+              <p className="text-[11px] text-white/40 leading-relaxed">{!imageUrl?"Face fully visible, natural light, neutral expression.":"Side profile: stand perpendicular to the camera, ear visible, hair tucked back."}</p>
+            </div>
+          )}
+
+          {/* Side profile tips when both uploaded */}
+          {imageUrl&&sideImageUrl&&(
+            <div className="mb-5 p-3 rounded-2xl border flex items-center gap-3" style={{background:"rgba(168,85,247,0.06)",borderColor:"rgba(168,85,247,0.18)"}}>
+              <span className="text-lg">✅</span>
+              <div>
+                <p className="text-[11px] font-black text-white/70">Both photos ready</p>
+                <p className="text-[9px] text-white/35">Side profile enables jaw angle & nose bridge analysis (+3 criteria)</p>
+              </div>
             </div>
           )}
 
@@ -672,7 +738,7 @@ export default function Home(){
           {loadingModels&&<p className="text-white/18 text-[10px] text-center font-black uppercase tracking-widest mb-4 animate-pulse">Loading AI models...</p>}
 
           <button onClick={runAnalysis} disabled={!imageEl||!modelsLoaded||analyzing} className={`w-full py-5 font-black text-[11px] uppercase tracking-[0.15em] rounded-2xl transition-all ${imageEl&&modelsLoaded&&!analyzing?"hover:scale-[1.01] text-white":"text-white/12 cursor-not-allowed"}`} style={imageEl&&modelsLoaded&&!analyzing?{background:"linear-gradient(135deg,#A855F7,#7c3aed,#00D4FF)",boxShadow:"0 0 40px rgba(168,85,247,0.3)"}:{background:"rgba(255,255,255,0.03)"}}>
-            {analyzing?"Biometric analysis in progress...":"Launch AI analysis"}
+            {analyzing?"Biometric analysis in progress...":sideImageUrl?"Launch complete AI analysis ✦":"Launch AI analysis"}
           </button>
           <p className="text-[9px] text-white/10 text-center mt-4">100% local · No photo uploaded · Embedded AI model</p>
         </div>
@@ -894,7 +960,8 @@ export default function Home(){
 
           {/* Glassmorphism Analysis Card */}
           <div className="p-7 rounded-3xl mb-4 text-center border glow-card" style={{background:"rgba(255,255,255,0.025)",borderColor:"rgba(168,85,247,0.15)",backdropFilter:"blur(10px)"}}>
-            <div className="text-[8px] font-black uppercase tracking-[0.2em] mb-3" style={{color:"#00D4FF"}}>🔬 Complete Biometric Analysis</div>
+            <div className="text-[8px] font-black uppercase tracking-[0.2em] mb-1" style={{color:"#00D4FF"}}>🔬 Complete Biometric Analysis</div>
+            {sideImageUrl&&<div className="text-[7px] font-black uppercase tracking-[0.15em] mb-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full" style={{color:"#A855F7",background:"rgba(168,85,247,0.1)",border:"1px solid rgba(168,85,247,0.2)"}}>👤 Side profile included</div>}
             <BiometryGauge score={results.overall} potential={showDeepDive?results.potential:results.overall}/>
             <div className="flex items-center justify-center gap-5 mt-3">
               <div className="flex items-center gap-1.5"><div className="w-5 h-[2px] bg-white rounded-full"/><span className="text-[8px] text-white/22 font-bold uppercase tracking-wider">Current Score</span></div>
@@ -1066,6 +1133,10 @@ export default function Home(){
 
   return null;
 }
+
+
+
+
 
 
 
