@@ -879,8 +879,8 @@ export default function Home(){
               <div className="flex items-start gap-3">
                 <span className="text-xl flex-shrink-0">👤</span>
                 <div>
-                  <p className="text-[12px] font-black text-white/80 mb-1">Side profile = +20% precision</p>
-                  <p className="text-[10px] text-white/45 leading-relaxed">Optional but <span className="font-black" style={{color:"#A855F7"}}>strongly recommended</span>. The side view analyzes your jaw angle, nose bridge projection and chin profile — criteria invisible from the front. Stand perpendicular to camera, ear visible.</p>
+                  <p className="text-[12px] font-black text-white/80 mb-1">Add a side profile for maximum precision</p>
+                  <p className="text-[10px] text-white/45 leading-relaxed">Optional but <span className="font-black" style={{color:"#A855F7"}}>strongly recommended</span>. The side view allows the AI to correctly calculate your jaw angle, nose bridge projection and chin profile — criteria invisible from the front. Stand perpendicular to camera, ear visible.</p>
                 </div>
               </div>
             </div>
@@ -944,10 +944,8 @@ export default function Home(){
     // ── PRICING PAGE (no offer selected) ──────────────────────────────────
     if(!offerUnlocked){
       // Build Stripe URLs with success redirect
-      const origin = typeof window!=="undefined"?window.location.origin:"";
-      const starterUrl = `https://buy.stripe.com/28E9AV0Ix9ix3R16lf3ZK03?success_url=${encodeURIComponent(origin+"/?unlocked=starter")}`;
-      const deepdiveUrl = `https://buy.stripe.com/4gMdRb76VgKZfzJ24Z3ZK04?success_url=${encodeURIComponent(origin+"/?unlocked=deepdive")}`;
-      const eliteUrl = `https://buy.stripe.com/6oU3cx76V2U91IT3933ZK05?success_url=${encodeURIComponent(origin+"/?unlocked=elite")}`;
+      const starterUrl = `https://buy.stripe.com/eVq28tbnbeCR3R1cJD3ZK0k`;
+      const deepdiveUrl = `https://buy.stripe.com/14A00lezndyNgDNbFz3ZK0l`;
 
       return(
         <main className="min-h-screen text-white relative overflow-hidden" style={{background:"#0B0E14",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
@@ -962,7 +960,7 @@ export default function Home(){
                 <div className="text-5xl mb-4">🎉</div>
                 <p className="text-[11px] font-black uppercase tracking-[0.2em] mb-2" style={{color:"#A855F7"}}>Payment confirmed!</p>
                 <h3 className="text-2xl font-black text-white mb-3 tracking-tight">
-                  {stripeSuccess==="starter"?"Starter access unlocked":stripeSuccess==="deepdive"?"Deep Dive unlocked 🧬":"Elite access unlocked 👑"}
+                  {stripeSuccess==="starter"?"Starter access unlocked":"Deep Dive unlocked 🧬"}
                 </h3>
                 <p className="text-[12px] text-white/45 mb-6 leading-relaxed">
                   Now go back and do your analysis — your results are waiting for you.
@@ -1018,14 +1016,14 @@ export default function Home(){
             {/* 3 Pricing Cards */}
             <div className="w-full max-w-sm flex flex-col gap-4">
 
-              {/* STARTER — $1.99 */}
+              {/* STARTER — $4.99 */}
               <div className="relative rounded-3xl p-6 overflow-hidden border" style={{background:"rgba(12,12,24,0.95)",borderColor:"rgba(255,255,255,0.10)",backdropFilter:"blur(20px)"}}>
                 <div className="absolute top-0 left-0 right-0 h-[1px]" style={{background:"linear-gradient(90deg,transparent,rgba(0,212,255,0.4),transparent)"}}/>
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Starter</p>
                     <div className="flex items-end gap-2">
-                      <span className="text-4xl font-black text-white tracking-tighter">$1.99</span>
+                      <span className="text-4xl font-black text-white tracking-tighter">$4.99</span>
                     </div>
                   </div>
                   <div className="text-2xl mt-1">📊</div>
@@ -1045,7 +1043,7 @@ export default function Home(){
                   ))}
                 </div>
                 <a href={starterUrl} target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#374151,#4b5563)"}}>
-                  Access — $1.99
+                  Access — $4.99
                 </a>
               </div>
 
@@ -1062,7 +1060,7 @@ export default function Home(){
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{color:"#A855F7"}}>Deep Dive</p>
                     <div className="flex items-end gap-2">
-                      <span className="text-4xl font-black text-white tracking-tighter">$9.99</span>
+                      <span className="text-4xl font-black text-white tracking-tighter">$14.99</span>
                     </div>
                   </div>
                   <div className="text-2xl mt-1">🧬</div>
@@ -1104,47 +1102,7 @@ export default function Home(){
                   ))}
                 </div>
                 <a href={deepdiveUrl} target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[12px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 40px rgba(168,85,247,0.4)"}}>
-                  ⚡ Unlock everything — $9.99
-                </a>
-              </div>
-
-              {/* ELITE — $19.99 */}
-              <div className="relative rounded-3xl p-6 overflow-hidden border" style={{background:"rgba(12,12,24,0.95)",borderColor:"rgba(0,212,255,0.25)",backdropFilter:"blur(20px)"}}>
-                <div className="absolute top-0 left-0 right-0 h-[1px]" style={{background:"linear-gradient(90deg,transparent,rgba(0,212,255,0.6),transparent)"}}/>
-                <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{background:"radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,212,255,0.07),transparent)"}}/>
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{color:"#00D4FF"}}>Elite</p>
-                    <div className="flex items-end gap-2">
-                      <span className="text-4xl font-black text-white tracking-tighter">$19.99</span>
-                    </div>
-                  </div>
-                  <div className="text-2xl mt-1">👑</div>
-                </div>
-
-                <div className="mb-4 p-3 rounded-2xl border" style={{background:"rgba(0,212,255,0.07)",borderColor:"rgba(0,212,255,0.18)"}}>
-                  <p className="text-[11px] font-black text-white/85 leading-snug mb-0.5">🤖 Potential max <span style={{color:"#00D4FF"}}>10/10</span> simulated by AI morphing</p>
-                  <p className="text-[9px] text-white/40">Visualize your transformation before you start</p>
-                </div>
-
-                <div className="space-y-2 mb-4">
-                  {[
-                    {icon:"🧬",t:"All Deep Dive included (full tips)"},
-                    {icon:"🤖",t:"AI Morphing — Visual 10/10 simulation"},
-                    {icon:"👑",t:"Max 10/10 potential calculated"},
-                    {icon:"🎯",t:"Ultra-personalized transformation plan"},
-                    {icon:"🔬",t:"Premium biometric PDF report"},
-                    {icon:"⚡",t:"Results from 24h — priority tips"},
-                  ].map((item,i)=>(
-                    <div key={i} className="flex items-center gap-2.5">
-                      <span className="text-sm flex-shrink-0">{item.icon}</span>
-                      <span className="text-[11px] font-bold text-white/70">{item.t}</span>
-                      <span className="ml-auto text-[10px] font-black flex-shrink-0" style={{color:"#00D4FF"}}>✓</span>
-                    </div>
-                  ))}
-                </div>
-                <a href={eliteUrl} target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#0891b2,#00D4FF)",boxShadow:"0 0 30px rgba(0,212,255,0.3)"}}>
-                  👑 Elite Access — $19.99
+                  ⚡ Unlock everything — $14.99
                 </a>
               </div>
 
