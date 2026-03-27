@@ -189,6 +189,49 @@ function LandmarkOverlay({imageUrl,landmarks,progress}:{imageUrl:string;landmark
   return <canvas ref={canvasRef} className="w-full h-full object-cover absolute inset-0"/>;
 }
 
+// ─── SIDE PROFILE LANDMARK OVERLAY (simplified — draws jaw profile line & nose bridge) ──
+function SideLandmarkOverlay({imageUrl,landmarks,progress}:{imageUrl:string;landmarks:{x:number;y:number}[]|null;progress:number}){
+  const canvasRef=useRef<HTMLCanvasElement>(null);
+  useEffect(()=>{
+    const canvas=canvasRef.current; if(!canvas)return;
+    const ctx=canvas.getContext("2d"); if(!ctx)return;
+    const img=new Image(); img.src=imageUrl;
+    img.onload=()=>{
+      canvas.width=img.width; canvas.height=img.height;
+      ctx.drawImage(img,0,0);
+      if(!landmarks)return;
+      const pts=landmarks; const lw=Math.max(1,img.width/320);
+      ctx.lineWidth=lw;
+      ctx.globalAlpha=Math.min(1,(progress/100)*1.8);
+      // Draw jaw contour in cyan
+      const jawGroup=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+      ctx.beginPath(); ctx.strokeStyle="rgba(0,212,255,0.70)";
+      jawGroup.forEach((idx,i)=>i===0?ctx.moveTo(pts[idx].x,pts[idx].y):ctx.lineTo(pts[idx].x,pts[idx].y));
+      ctx.stroke();
+      // Nose bridge
+      ctx.beginPath(); ctx.strokeStyle="rgba(168,85,247,0.55)";
+      [27,28,29,30,31,32,33,34,35].forEach((idx,i)=>i===0?ctx.moveTo(pts[idx].x,pts[idx].y):ctx.lineTo(pts[idx].x,pts[idx].y));
+      ctx.stroke();
+      // Eye
+      ctx.beginPath(); ctx.strokeStyle="rgba(0,212,255,0.50)";
+      [36,37,38,39,40,41,36].forEach((idx,i)=>i===0?ctx.moveTo(pts[idx].x,pts[idx].y):ctx.lineTo(pts[idx].x,pts[idx].y));
+      ctx.stroke();
+      // Dashed vertical reference line
+      ctx.setLineDash([4,5]); ctx.strokeStyle="rgba(168,85,247,0.40)";
+      const midX=(pts[27].x+pts[33].x)/2;
+      ctx.beginPath();ctx.moveTo(midX,pts[19].y-10);ctx.lineTo(midX,pts[8].y+10);ctx.stroke();
+      ctx.setLineDash([]);
+      // Key points
+      ctx.fillStyle="rgba(0,212,255,1)";
+      pts.forEach(pt=>{const r=Math.max(1.5,img.width/260);ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);ctx.fill();});
+      ctx.fillStyle="rgba(168,85,247,1)";
+      [0,8,16,27,30,33].forEach(i=>{const r=Math.max(2.5,img.width/160);ctx.beginPath();ctx.arc(pts[i].x,pts[i].y,r,0,Math.PI*2);ctx.fill();});
+      ctx.globalAlpha=1;
+    };
+  },[imageUrl,landmarks,progress]);
+  return <canvas ref={canvasRef} className="w-full h-full object-cover absolute inset-0"/>;
+}
+
 // ─── UI COMPONENTS ────────────────────────────────────────────────────────────
 function BiometryGauge({score,potential}:{score:number;potential:number}){
   const toA=(s:number)=>((s-1.0)/9.0)*180-90;
@@ -240,8 +283,9 @@ function ScoreBar({label,value,color="#00D4FF"}:{label:string;value:number;color
 }
 
 function DiffBadge({d}:{d:string}){
-  const c:Record<string,string>={Facile:"#22c55e",Moyen:"#eab308",Difficile:"#ef4444"};
-  return <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full border" style={{color:c[d],borderColor:c[d]+"40"}}>{d}</span>;
+  const c:Record<string,string>={Easy:"#22c55e",Medium:"#eab308",Hard:"#ef4444",Facile:"#22c55e",Moyen:"#eab308",Difficile:"#ef4444"};
+  const col = c[d] || "#6b7280";
+  return <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full border" style={{color:col,borderColor:col+"40"}}>{d}</span>;
 }
 function PriorityBadge({p}:{p:number}){
   const cfg:Record<number,{label:string,c:string}>={1:{label:"Impact Maximal",c:"#ef4444"},2:{label:"Impact Fort",c:"#f97316"},3:{label:"Impact Moyen",c:"#eab308"},4:{label:"Moderate Impact",c:"#84cc16"},5:{label:"Bonus",c:"#22c55e"}};
@@ -335,15 +379,27 @@ export default function Home(){
   const [loadingModels,setLoadingModels]=useState(false);
   const [analyzing,setAnalyzing]=useState(false);
   const [analysisStep,setAnalysisStep]=useState("");
-  const [analysisPhase,setAnalysisPhase]=useState(0);
+  const [,setAnalysisPhase]=useState(0);
   const [progress,setProgress]=useState(0);
   const [results,setResults]=useState<LookmaxScore|null>(null);
   const [interimLandmarks,setInterimLandmarks]=useState<{x:number;y:number}[]|null>(null);
+  const [sideInterimLandmarks,setSideInterimLandmarks]=useState<{x:number;y:number}[]|null>(null);
   const [advice,setAdvice]=useState<Advice[]>([]);
   const [error,setError]=useState<string|null>(null);
   const [activeTab,setActiveTab]=useState<"scores"|"potential"|"advice">("scores");
   const [expandedAdvice,setExpandedAdvice]=useState<number|null>(null);
   const [offerUnlocked,setOfferUnlocked]=useState<null|"starter"|"deepdive"|"elite">(null);
+  const [stripeSuccess,setStripeSuccess]=useState<null|"starter"|"deepdive"|"elite">(null);
+
+  // Detect Stripe success redirect via URL params
+  useEffect(()=>{
+    if(typeof window==="undefined")return;
+    const params=new URLSearchParams(window.location.search);
+    const plan=params.get("unlocked") as null|"starter"|"deepdive"|"elite";
+    if(plan&&["starter","deepdive","elite"].includes(plan)){
+      setStripeSuccess(plan);
+    }
+  },[]);
 
   useEffect(()=>{
     if(modelsLoaded||loadingModels)return;
@@ -386,6 +442,13 @@ export default function Home(){
           const det=await faceapi.detectSingleFace(imageEl,new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
           if(det)setInterimLandmarks(det.landmarks.positions);
         }catch{}
+        // Also attempt side profile landmark detection
+        if(sideImageEl){
+          try{
+            const detSide=await faceapi.detectSingleFace(sideImageEl,new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+            if(detSide)setSideInterimLandmarks(detSide.landmarks.positions);
+          }catch{}
+        }
       }
       if(i===5&&hasSideProfile){setAnalysisStep("Analyzing side profile — jaw angle & nose bridge...");}
       await new Promise(r=>setTimeout(r,phases[i].dur));
@@ -410,7 +473,7 @@ export default function Home(){
 
   const reset=()=>{
     setPage("landing");setGender(null);setAge(null);
-    setImageUrl(null);setImageEl(null);setResults(null);setInterimLandmarks(null);
+    setImageUrl(null);setImageEl(null);setResults(null);setInterimLandmarks(null);setSideInterimLandmarks(null);
     setSideImageUrl(null);setSideImageEl(null);
     setAdvice([]);setError(null);setProgress(0);setOfferUnlocked(null);
   };
@@ -440,7 +503,7 @@ export default function Home(){
                   </div>
                   <span className="text-sm font-black flex-shrink-0" style={{color:r.color}}>{r.score}</span>
                 </div>
-                <p className="text-[9px] text-white/40 leading-relaxed">"{r.text}"</p>
+                <p className="text-[9px] text-white/40 leading-relaxed">&ldquo;{r.text}&rdquo;</p>
               </div>
             ))}
             <div className="p-3 border rounded-xl text-center" style={{background:"rgba(168,85,247,0.06)",borderColor:"rgba(168,85,247,0.15)"}}>
@@ -451,21 +514,45 @@ export default function Home(){
 
           {/* CENTER — Hero */}
           <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
+
+            {/* Urgency / social proof pill */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 border rounded-full mb-4 text-[9px] font-bold text-white/50 uppercase tracking-[0.15em]" style={{background:"rgba(168,85,247,0.08)",borderColor:"rgba(168,85,247,0.25)"}}>
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{background:"#A855F7"}}/>
+              🔥 47 analyses done today
+            </div>
+
             <div className="inline-flex items-center gap-2 px-4 py-1.5 border rounded-full mb-6 text-[9px] font-bold text-white/35 uppercase tracking-[0.15em]" style={{background:"rgba(0,212,255,0.05)",borderColor:"rgba(0,212,255,0.15)"}}>
               <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{background:"#00D4FF"}}/>
               AI Biometric Laboratory · 50+ Analysis Points
             </div>
 
             <p className="text-[13px] font-black text-white/50 uppercase tracking-[0.25em] mb-3">Precision Facial Analysis</p>
-            <h1 className="font-black leading-none tracking-tighter mb-4" style={{fontSize:"clamp(4rem,12vw,8rem)",fontStyle:"italic",background:"linear-gradient(150deg,#ffffff 0%,#e0c3fc 30%,#A855F7 60%,#00D4FF 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>
+            <h1 className="font-black leading-[1.1] tracking-tighter mb-6 pb-2" style={{fontSize:"clamp(3.5rem,10vw,7rem)",fontStyle:"italic",background:"linear-gradient(150deg,#ffffff 0%,#e0c3fc 30%,#A855F7 60%,#00D4FF 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>
               BioMetry Lab
             </h1>
 
-            <div className="flex flex-col items-center gap-2 mb-6">
-              <p className="text-white/70 text-xl font-bold tracking-wide">Decimal biometric score + AI potential</p>
-              <p className="text-white/45 text-[14px] leading-relaxed">
-                50+ points analyzed · Symmetry · Facial thirds · Canthal tilt · Jawline
+            {/* Value prop — sharp & direct */}
+            <div className="flex flex-col items-center gap-1.5 mb-5 max-w-md">
+              <p className="text-white/80 text-xl font-bold tracking-wide">Discover your exact score out of 10</p>
+              <p className="text-white/50 text-[14px] leading-relaxed">
+                AI maps <span className="text-white font-black">50+ biometric points</span> on your face.<br/>
+                Score · Potential · Personalized plan to improve.
               </p>
+            </div>
+
+            {/* Social proof micro-bar */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex -space-x-1.5">
+                {["AT","CR","MD","LF","SM"].map((av,i)=>(
+                  <div key={i} className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[7px] font-black" style={{background:"rgba(168,85,247,0.3)",borderColor:"#0B0E14",color:"#fff"}}>
+                    {av[0]}
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_,j)=><span key={j} className="text-yellow-400 text-[10px]">★</span>)}
+              </div>
+              <span className="text-[10px] text-white/40 font-semibold">617 analyses · 4.9/5</span>
             </div>
 
             {/* CTA */}
@@ -475,7 +562,13 @@ export default function Home(){
                 Scan my face
                 <span className="group-hover:translate-x-1.5 transition-transform">→</span>
               </button>
-              <p className="text-[10px] text-white/35 tracking-wide font-semibold">Free analysis · Results in 45 sec · 100% local &amp; private</p>
+              <div className="flex items-center gap-3 text-[10px] text-white/35 font-semibold">
+                <span>⚡ 45 sec analysis</span>
+                <span>·</span>
+                <span>🔒 100% private</span>
+                <span>·</span>
+                <span>📱 No app needed</span>
+              </div>
             </div>
 
             {/* Tech stats */}
@@ -491,6 +584,24 @@ export default function Home(){
                   <p className="text-[9px] text-white/35 mt-0.5 leading-snug">{item.s}</p>
                 </div>
               ))}
+            </div>
+
+            {/* What you get */}
+            <div className="w-full max-w-md p-5 rounded-2xl text-left border mb-6" style={{background:"rgba(168,85,247,0.05)",borderColor:"rgba(168,85,247,0.15)"}}>
+              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">What you get</p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  {e:"📊",t:"Decimal score /10"},
+                  {e:"🧬",t:"50+ criteria analyzed"},
+                  {e:"💎",t:"Your improvement potential"},
+                  {e:"📋",t:"Personalized action plan"},
+                ].map((item,i)=>(
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-base">{item.e}</span>
+                    <span className="text-[11px] text-white/65 font-bold">{item.t}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Technical info card */}
@@ -533,9 +644,18 @@ export default function Home(){
                     <span className="ml-auto text-[10px] font-black" style={{color:r.color}}>{r.score}</span>
                   </div>
                   <div className="flex gap-0.5 mb-1">{[...Array(r.stars)].map((_,j)=><span key={j} className="text-yellow-400 text-[7px]">★</span>)}</div>
-                  <p className="text-[8px] text-white/28 leading-relaxed">"{r.text.slice(0,70)}..."</p>
+                  <p className="text-[8px] text-white/28 leading-relaxed">&ldquo;{r.text.slice(0,70)}...&rdquo;</p>
                 </div>
               ))}
+            </div>
+
+            {/* Final CTA mobile */}
+            <div className="lg:hidden mt-8 w-full max-w-sm">
+              <button onClick={()=>setPage("form")} className="w-full group flex items-center justify-center gap-4 px-8 py-5 bg-white text-black font-black text-[11px] uppercase tracking-[0.2em] rounded-full transition-all hover:scale-[1.02]" style={{boxShadow:"0 0 50px rgba(168,85,247,0.25)"}}>
+                <span className="px-2.5 py-1 text-white text-[8px] rounded-full font-black uppercase" style={{background:"#A855F7"}}>FREE</span>
+                Start my analysis
+                <span className="group-hover:translate-x-1.5 transition-transform">→</span>
+              </button>
             </div>
           </div>
 
@@ -623,8 +743,8 @@ export default function Home(){
             AI Module Active
           </div>
           <h2 className="text-6xl font-black italic tracking-tighter mb-2">AI Scan</h2>
-          <p className="text-white/55 text-base font-semibold mb-1">Add your two photos for maximum precision</p>
-          <p className="text-white/30 text-[12px] mb-6">Front + side profile · natural light · neutral expression</p>
+          <p className="text-white/55 text-base font-semibold mb-1">Add your photos for maximum precision</p>
+          <p className="text-white/30 text-[12px] mb-6">Front · side profile · natural light · neutral expression</p>
 
           {/* TWO PHOTO ZONES */}
           <div className="grid grid-cols-2 gap-3 mb-5">
@@ -632,11 +752,11 @@ export default function Home(){
             {/* FRONT PHOTO */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-1.5 mb-0.5">
-                <span className="text-[8px] font-black text-white/25 uppercase tracking-widest">📸 Front</span>
-                {imageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full" style={{background:"rgba(0,212,255,0.12)",color:"#00D4FF"}}>✓</span>}
-                {!imageUrl&&<span className="text-[7px] font-black text-red-400/70 px-1.5 py-0.5 rounded-full border border-red-400/20">Required</span>}
+                <span className="text-[8px] font-black uppercase tracking-widest" style={{color:"#00D4FF"}}>📸 Face</span>
+                {imageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full" style={{background:"rgba(0,212,255,0.12)",color:"#00D4FF"}}>✓ Ready</span>}
+                {!imageUrl&&<span className="text-[7px] font-black text-red-400/80 px-1.5 py-0.5 rounded-full border border-red-400/25">Required</span>}
               </div>
-              <div className="relative w-full aspect-square rounded-2xl overflow-hidden border" style={{borderColor:imageUrl?"rgba(0,212,255,0.25)":"rgba(255,255,255,0.06)",background:"rgba(255,255,255,0.01)"}}>
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden border transition-all" style={{borderColor:imageUrl?"rgba(0,212,255,0.35)":"rgba(255,255,255,0.08)",background:imageUrl?"rgba(255,255,255,0.01)":"rgba(0,212,255,0.02)"}}>
                 {imageUrl&&<img src={imageUrl} className={`w-full h-full object-cover ${analyzing&&interimLandmarks?"opacity-0":"opacity-100"} transition-opacity`} alt="scan front"/>}
                 {imageUrl&&analyzing&&interimLandmarks&&<LandmarkOverlay imageUrl={imageUrl} landmarks={interimLandmarks} progress={progress}/>}
                 {analyzing&&<div className="absolute inset-0 overflow-hidden pointer-events-none"><div className="laser-scan"/></div>}
@@ -657,18 +777,39 @@ export default function Home(){
                   </div>
                 )}
                 {!imageUrl&&(
-                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-2 cursor-pointer group">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center transition-all border group-hover:border-cyan-400/40" style={{background:"rgba(255,255,255,0.06)",borderColor:"rgba(0,212,255,0.2)"}}>
-                      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50"><path d="M12 13.5v-7M9 9l3-3 3 3"/><path d="M3 14.25a1.75 1.75 0 001.75 1.75h10.5A1.75 1.75 0 0017 14.25v-5.5A1.75 1.75 0 0015.25 7h-1.1a.6.6 0 01-.43-.18L12 5.1a1.75 1.75 0 00-1.25-.6H9.25A1.75 1.75 0 007.5 5.1L5.78 6.82A.6.6 0 015.35 7h-1.6A1.75 1.75 0 002 8.75v5.5"/></svg>
+                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-3 cursor-pointer group">
+                    {/* Beautiful front-face upload icon */}
+                    <div className="relative">
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all group-hover:scale-105" style={{background:"linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05))",border:"1px solid rgba(0,212,255,0.25)"}}>
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          {/* Face outline */}
+                          <ellipse cx="14" cy="12" rx="7" ry="8.5" stroke="rgba(0,212,255,0.8)" strokeWidth="1.4"/>
+                          {/* Eyes */}
+                          <circle cx="11" cy="10.5" r="1.2" fill="rgba(0,212,255,0.9)"/>
+                          <circle cx="17" cy="10.5" r="1.2" fill="rgba(0,212,255,0.9)"/>
+                          {/* Smile */}
+                          <path d="M11 14c0 0 1.5 2 3 2s3-2 3-2" stroke="rgba(0,212,255,0.8)" strokeWidth="1.2" strokeLinecap="round"/>
+                          {/* Upload arrow */}
+                          <path d="M14 22v4M12 24l2-2 2 2" stroke="rgba(0,212,255,0.6)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{background:"linear-gradient(135deg,#00D4FF,#0891b2)"}}>
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 5l3-3 3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
                     </div>
-                    <p className="text-[9px] text-white/50 font-black text-center">Add front photo</p>
-                    <p className="text-[7px] text-white/25 text-center leading-snug">Face forward<br/>neutral expression</p>
+                    <div className="text-center">
+                      <p className="text-[10px] font-black text-white/70 mb-0.5">Front face</p>
+                      <p className="text-[8px] text-white/30 leading-snug">Look straight<br/>neutral expression</p>
+                    </div>
                     <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
                   </label>
                 )}
                 {imageUrl&&!analyzing&&(
-                  <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl" style={{background:"rgba(0,0,0,0.5)"}}>
-                    <span className="text-[9px] text-white font-black uppercase tracking-widest">Change</span>
+                  <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl" style={{background:"rgba(0,0,0,0.55)"}}>
+                    <div className="flex flex-col items-center gap-1">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      <span className="text-[9px] text-white font-black uppercase tracking-widest">Change</span>
+                    </div>
                     <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
                   </label>
                 )}
@@ -678,35 +819,53 @@ export default function Home(){
             {/* SIDE PROFILE PHOTO */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-1.5 mb-0.5">
-                <span className="text-[8px] font-black text-white/25 uppercase tracking-widest">👤 Profile</span>
-                {sideImageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full" style={{background:"rgba(168,85,247,0.12)",color:"#A855F7"}}>✓</span>}
-                {!sideImageUrl&&<span className="text-[7px] font-black text-white/25 px-1.5 py-0.5 rounded-full border border-white/10">Optional</span>}
+                <span className="text-[8px] font-black uppercase tracking-widest" style={{color:"#A855F7"}}>👤 Profile</span>
+                {sideImageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full" style={{background:"rgba(168,85,247,0.12)",color:"#A855F7"}}>✓ Ready</span>}
+                {!sideImageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full border" style={{color:"#A855F7",borderColor:"rgba(168,85,247,0.30)"}}>+20% précision</span>}
               </div>
-              <div className="relative w-full aspect-square rounded-2xl overflow-hidden border transition-all" style={{borderColor:sideImageUrl?"rgba(168,85,247,0.30)":"rgba(255,255,255,0.06)",background:"rgba(255,255,255,0.01)"}}>
-                {sideImageUrl&&<img src={sideImageUrl} className="w-full h-full object-cover" alt="scan profil"/>}
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden border transition-all" style={{borderColor:sideImageUrl?"rgba(168,85,247,0.40)":"rgba(168,85,247,0.15)",background:sideImageUrl?"rgba(255,255,255,0.01)":"rgba(168,85,247,0.02)"}}>
+                {sideImageUrl&&<img src={sideImageUrl} className={`w-full h-full object-cover ${analyzing&&sideInterimLandmarks?"opacity-0":"opacity-100"} transition-opacity`} alt="scan profil"/>}
+                {sideImageUrl&&analyzing&&sideInterimLandmarks&&<SideLandmarkOverlay imageUrl={sideImageUrl} landmarks={sideInterimLandmarks} progress={progress}/>}
                 {analyzing&&sideImageUrl&&<div className="absolute inset-0 overflow-hidden pointer-events-none"><div className="laser-scan" style={{animationDelay:"0.9s"}}/></div>}
                 {analyzing&&sideImageUrl&&(
                   <div className="absolute inset-0 pointer-events-none" style={{backgroundImage:"linear-gradient(rgba(168,85,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,0.03) 1px,transparent 1px)",backgroundSize:"16px 16px"}}/>
                 )}
                 {!sideImageUrl&&(
-                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-2 cursor-pointer group">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center transition-all border group-hover:border-purple-400/40" style={{background:"rgba(255,255,255,0.06)",borderColor:"rgba(168,85,247,0.2)"}}>
-                      {/* Side profile icon */}
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50">
-                        <circle cx="9" cy="7" r="3"/>
-                        <path d="M9 10c-3.5 0-6 2.5-6 6v1h8.5"/>
-                        <path d="M15 12c2.5 0 5 1.5 5 4v2h-5"/>
-                        <path d="M15 8a2 2 0 100-4 2 2 0 000 4z"/>
-                      </svg>
+                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-3 cursor-pointer group">
+                    {/* Beautiful side-profile upload icon */}
+                    <div className="relative">
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all group-hover:scale-105" style={{background:"linear-gradient(135deg,rgba(168,85,247,0.18),rgba(168,85,247,0.06))",border:"1px solid rgba(168,85,247,0.30)"}}>
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          {/* Side profile of a face - clean silhouette */}
+                          {/* Head */}
+                          <path d="M8 20 C8 20 7 17 7 14 C7 9.5 10 6 14.5 6 C18 6 20.5 8.5 20.5 12 C20.5 15 19 17 17 18 L17 20" stroke="rgba(168,85,247,0.85)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                          {/* Nose bump */}
+                          <path d="M20.5 12 L22 13 L20.5 14" stroke="rgba(168,85,247,0.85)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          {/* Eye */}
+                          <circle cx="16" cy="11" r="1.1" fill="rgba(168,85,247,0.9)"/>
+                          {/* Jaw / chin */}
+                          <path d="M8 20 C8 20 10 22 13 22 L17 22" stroke="rgba(168,85,247,0.70)" strokeWidth="1.3" strokeLinecap="round"/>
+                          {/* Upload arrow */}
+                          <path d="M6 25v2M5 26l1-1 1 1" stroke="rgba(168,85,247,0.6)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)"}}>
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 5l3-3 3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
                     </div>
-                    <p className="text-[9px] text-white/50 font-black text-center">Add side photo</p>
-                    <p className="text-[7px] text-white/25 text-center leading-snug">Profile view<br/>ear visible</p>
+                    <div className="text-center">
+                      <p className="text-[10px] font-black text-white/70 mb-0.5">Side profile</p>
+                      <p className="text-[8px] leading-snug" style={{color:"rgba(168,85,247,0.7)"}}>Strongly recommended<br/>ear visible</p>
+                    </div>
                     <input type="file" className="hidden" accept="image/*" onChange={handleSideImage}/>
                   </label>
                 )}
                 {sideImageUrl&&!analyzing&&(
-                  <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl" style={{background:"rgba(0,0,0,0.5)"}}>
-                    <span className="text-[9px] text-white font-black uppercase tracking-widest">Change</span>
+                  <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl" style={{background:"rgba(0,0,0,0.55)"}}>
+                    <div className="flex flex-col items-center gap-1">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      <span className="text-[9px] text-white font-black uppercase tracking-widest">Change</span>
+                    </div>
                     <input type="file" className="hidden" accept="image/*" onChange={handleSideImage}/>
                   </label>
                 )}
@@ -714,22 +873,51 @@ export default function Home(){
             </div>
           </div>
 
-          {/* Photo tips */}
-          {(!imageUrl||!sideImageUrl)&&(
-            <div className="mb-5 p-4 rounded-2xl text-center border" style={{background:"rgba(255,255,255,0.03)",borderColor:"rgba(0,212,255,0.1)"}}>
-              {!imageUrl&&<p className="text-[12px] text-white/65 font-bold mb-1">📱 Front photo required</p>}
-              {imageUrl&&!sideImageUrl&&<p className="text-[12px] text-white/65 font-bold mb-1">👤 Add a side profile for +20% precision</p>}
-              <p className="text-[11px] text-white/40 leading-relaxed">{!imageUrl?"Face fully visible, natural light, neutral expression.":"Side profile: stand perpendicular to the camera, ear visible, hair tucked back."}</p>
+          {/* Side profile importance banner — shown when front is uploaded but not side */}
+          {imageUrl&&!sideImageUrl&&!analyzing&&(
+            <div className="mb-4 p-4 rounded-2xl border" style={{background:"linear-gradient(135deg,rgba(168,85,247,0.08),rgba(168,85,247,0.03))",borderColor:"rgba(168,85,247,0.25)"}}>
+              <div className="flex items-start gap-3">
+                <span className="text-xl flex-shrink-0">👤</span>
+                <div>
+                  <p className="text-[12px] font-black text-white/80 mb-1">Side profile = +20% precision</p>
+                  <p className="text-[10px] text-white/45 leading-relaxed">Optional but <span className="font-black" style={{color:"#A855F7"}}>strongly recommended</span>. The side view analyzes your jaw angle, nose bridge projection and chin profile — criteria invisible from the front. Stand perpendicular to camera, ear visible.</p>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* Side profile tips when both uploaded */}
-          {imageUrl&&sideImageUrl&&(
-            <div className="mb-5 p-3 rounded-2xl border flex items-center gap-3" style={{background:"rgba(168,85,247,0.06)",borderColor:"rgba(168,85,247,0.18)"}}>
+          {/* No front photo yet */}
+          {!imageUrl&&!analyzing&&(
+            <div className="mb-4 p-3 rounded-2xl text-center border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(0,212,255,0.10)"}}>
+              <p className="text-[11px] text-white/45 leading-relaxed">📱 Front photo required · Good lighting · Neutral expression · Face fully visible</p>
+            </div>
+          )}
+
+          {/* Both photos ready */}
+          {imageUrl&&sideImageUrl&&!analyzing&&(
+            <div className="mb-4 p-3 rounded-2xl border flex items-center gap-3" style={{background:"rgba(168,85,247,0.06)",borderColor:"rgba(168,85,247,0.20)"}}>
               <span className="text-lg">✅</span>
               <div>
-                <p className="text-[11px] font-black text-white/70">Both photos ready</p>
-                <p className="text-[9px] text-white/35">Side profile enables jaw angle & nose bridge analysis (+3 criteria)</p>
+                <p className="text-[11px] font-black text-white/75">Both photos ready · Maximum precision</p>
+                <p className="text-[9px] text-white/35">Jaw angle · Nose bridge · Chin profile · 50+ criteria</p>
+              </div>
+            </div>
+          )}
+
+          {/* MOTIVATIONAL MESSAGE during scan */}
+          {analyzing&&(
+            <div className="mb-4 p-5 rounded-2xl border text-center" style={{background:"linear-gradient(135deg,rgba(168,85,247,0.10),rgba(0,212,255,0.05))",borderColor:"rgba(168,85,247,0.20)"}}>
+              <div className="text-2xl mb-2 wiggle">✨</div>
+              <p className="text-[14px] font-black text-white/90 mb-1 leading-snug">
+                Are you ready to change your life?
+              </p>
+              <p className="text-[11px] leading-relaxed mb-3" style={{color:"rgba(168,85,247,0.85)"}}>
+                Your personalized improvement plan is being calculated right now. Every point analyzed brings you closer to your best version.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {["💪 Jawline","✨ Skin","👁️ Eyes","🦴 Posture","💈 Style"].map((t,i)=>(
+                  <span key={i} className="text-[9px] font-black px-2 py-1 rounded-full border" style={{color:"rgba(255,255,255,0.45)",borderColor:"rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.03)"}}>{t}</span>
+                ))}
               </div>
             </div>
           )}
@@ -755,11 +943,47 @@ export default function Home(){
 
     // ── PRICING PAGE (no offer selected) ──────────────────────────────────
     if(!offerUnlocked){
+      // Build Stripe URLs with success redirect
+      const origin = typeof window!=="undefined"?window.location.origin:"";
+      const starterUrl = `https://buy.stripe.com/28E9AV0Ix9ix3R16lf3ZK03?success_url=${encodeURIComponent(origin+"/?unlocked=starter")}`;
+      const deepdiveUrl = `https://buy.stripe.com/4gMdRb76VgKZfzJ24Z3ZK04?success_url=${encodeURIComponent(origin+"/?unlocked=deepdive")}`;
+      const eliteUrl = `https://buy.stripe.com/6oU3cx76V2U91IT3933ZK05?success_url=${encodeURIComponent(origin+"/?unlocked=elite")}`;
+
       return(
         <main className="min-h-screen text-white relative overflow-hidden" style={{background:"#0B0E14",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
           <style>{CSS}</style>
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(168,85,247,0.10),transparent)]"/>
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.005)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.005)_1px,transparent_1px)] bg-[size:52px_52px]"/>
+
+          {/* Stripe Success Modal */}
+          {stripeSuccess&&(
+            <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{background:"rgba(0,0,0,0.75)",backdropFilter:"blur(8px)"}}>
+              <div className="w-full max-w-sm p-8 rounded-3xl border text-center" style={{background:"rgba(12,12,24,0.98)",borderColor:"rgba(168,85,247,0.40)"}}>
+                <div className="text-5xl mb-4">🎉</div>
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] mb-2" style={{color:"#A855F7"}}>Payment confirmed!</p>
+                <h3 className="text-2xl font-black text-white mb-3 tracking-tight">
+                  {stripeSuccess==="starter"?"Starter access unlocked":stripeSuccess==="deepdive"?"Deep Dive unlocked 🧬":"Elite access unlocked 👑"}
+                </h3>
+                <p className="text-[12px] text-white/45 mb-6 leading-relaxed">
+                  Now go back and do your analysis — your results are waiting for you.
+                </p>
+                <button
+                  onClick={()=>{
+                    setOfferUnlocked(stripeSuccess);
+                    setStripeSuccess(null);
+                    // Clean URL
+                    if(typeof window!=="undefined"){
+                      window.history.replaceState({},"",window.location.pathname);
+                    }
+                  }}
+                  className="w-full py-4 font-black text-[12px] uppercase tracking-[0.12em] rounded-xl text-white transition-all hover:scale-[1.02]"
+                  style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 40px rgba(168,85,247,0.4)"}}
+                >
+                  ✅ View my results
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Blurred results preview */}
           <div className="absolute inset-0 z-0 flex items-start justify-center pt-10 pointer-events-none select-none" style={{filter:"blur(14px)",opacity:0.25,userSelect:"none"}}>
@@ -820,14 +1044,13 @@ export default function Home(){
                     </div>
                   ))}
                 </div>
-                <a href="https://buy.stripe.com/28E9AV0Ix9ix3R16lf3ZK03" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#374151,#4b5563)"}}>
+                <a href={starterUrl} target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#374151,#4b5563)"}}>
                   Access — $1.99
                 </a>
               </div>
 
-              {/* DEEP DIVE — $6.99 (TOP VENTES) */}
+              {/* DEEP DIVE — $9.99 (BEST SELLER) */}
               <div className="relative rounded-3xl p-6 overflow-hidden border-2" style={{background:"rgba(12,12,24,0.95)",borderColor:"rgba(168,85,247,0.45)",backdropFilter:"blur(20px)"}}>
-                {/* TOP VENTES badge */}
                 <div className="absolute -top-[1px] left-1/2 -translate-x-1/2">
                   <div className="px-4 py-1 text-[9px] font-black uppercase tracking-widest rounded-b-xl text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)"}}>
                     🔥 BEST SELLER
@@ -845,31 +1068,20 @@ export default function Home(){
                   <div className="text-2xl mt-1">🧬</div>
                 </div>
 
-                {/* Key promise banner */}
                 <div className="mb-4 p-3 rounded-2xl border" style={{background:"rgba(168,85,247,0.08)",borderColor:"rgba(168,85,247,0.20)"}}>
                   <p className="text-[11px] font-black text-white/85 leading-snug mb-0.5">⚡ Visible results from <span style={{color:"#A855F7"}}>24h</span> if tips are applied</p>
                   <p className="text-[9px] text-white/40">From the softest to most advanced — every tip adapted to your profile</p>
                 </div>
 
-                {/* Advice count highlight */}
                 <div className="mb-4 flex items-center gap-3 p-3 rounded-xl border" style={{background:"rgba(255,255,255,0.03)",borderColor:"rgba(255,255,255,0.06)"}}>
                   <div className="text-center flex-shrink-0">
                     <p className="text-3xl font-black" style={{color:"#A855F7"}}>{filteredAdvice.length}+</p>
-                    <p className="text-[7px] text-white/30 uppercase tracking-wider font-black">conseils</p>
+                    <p className="text-[7px] text-white/30 uppercase tracking-wider font-black">tips</p>
                   </div>
                   <div className="flex-1 space-y-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[8px]">🌿</span>
-                      <span className="text-[9px] text-white/45">Soft: skincare, hydration, sleep</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[8px]">💪</span>
-                      <span className="text-[9px] text-white/45">Medium: facial exercises, mewing, chewing</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[8px]">🔥</span>
-                      <span className="text-[9px] text-white/45">Advanced: recomposition, full routine</span>
-                    </div>
+                    <div className="flex items-center gap-1.5"><span className="text-[8px]">🌿</span><span className="text-[9px] text-white/45">Soft: skincare, hydration, sleep</span></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[8px]">💪</span><span className="text-[9px] text-white/45">Medium: mewing, chewing, posture</span></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[8px]">🔥</span><span className="text-[9px] text-white/45">Advanced: body recomp, full routine</span></div>
                   </div>
                 </div>
 
@@ -891,12 +1103,12 @@ export default function Home(){
                     </div>
                   ))}
                 </div>
-                <a href="https://buy.stripe.com/4gMdRb76VgKZfzJ24Z3ZK04" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[12px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 40px rgba(168,85,247,0.4)"}}>
+                <a href={deepdiveUrl} target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[12px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 40px rgba(168,85,247,0.4)"}}>
                   ⚡ Unlock everything — $9.99
                 </a>
               </div>
 
-              {/* ELITE — $14.99 */}
+              {/* ELITE — $19.99 */}
               <div className="relative rounded-3xl p-6 overflow-hidden border" style={{background:"rgba(12,12,24,0.95)",borderColor:"rgba(0,212,255,0.25)",backdropFilter:"blur(20px)"}}>
                 <div className="absolute top-0 left-0 right-0 h-[1px]" style={{background:"linear-gradient(90deg,transparent,rgba(0,212,255,0.6),transparent)"}}/>
                 <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{background:"radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,212,255,0.07),transparent)"}}/>
@@ -910,7 +1122,6 @@ export default function Home(){
                   <div className="text-2xl mt-1">👑</div>
                 </div>
 
-                {/* Elite promise banner */}
                 <div className="mb-4 p-3 rounded-2xl border" style={{background:"rgba(0,212,255,0.07)",borderColor:"rgba(0,212,255,0.18)"}}>
                   <p className="text-[11px] font-black text-white/85 leading-snug mb-0.5">🤖 Potential max <span style={{color:"#00D4FF"}}>10/10</span> simulated by AI morphing</p>
                   <p className="text-[9px] text-white/40">Visualize your transformation before you start</p>
@@ -932,7 +1143,7 @@ export default function Home(){
                     </div>
                   ))}
                 </div>
-                <a href="https://buy.stripe.com/6oU3cx76V2U91IT3933ZK05" target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#0891b2,#00D4FF)",boxShadow:"0 0 30px rgba(0,212,255,0.3)"}}>
+                <a href={eliteUrl} target="_blank" rel="noopener noreferrer" className="block w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-center text-white" style={{background:"linear-gradient(135deg,#0891b2,#00D4FF)",boxShadow:"0 0 30px rgba(0,212,255,0.3)"}}>
                   👑 Elite Access — $19.99
                 </a>
               </div>
@@ -1133,10 +1344,3 @@ export default function Home(){
 
   return null;
 }
-
-
-
-
-
-
-
