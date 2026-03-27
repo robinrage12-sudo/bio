@@ -777,30 +777,9 @@ export default function Home(){
                   </div>
                 )}
                 {!imageUrl&&(
-                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-3 cursor-pointer group">
-                    {/* Beautiful front-face upload icon */}
-                    <div className="relative">
-                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all group-hover:scale-105" style={{background:"linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05))",border:"1px solid rgba(0,212,255,0.25)"}}>
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          {/* Face outline */}
-                          <ellipse cx="14" cy="12" rx="7" ry="8.5" stroke="rgba(0,212,255,0.8)" strokeWidth="1.4"/>
-                          {/* Eyes */}
-                          <circle cx="11" cy="10.5" r="1.2" fill="rgba(0,212,255,0.9)"/>
-                          <circle cx="17" cy="10.5" r="1.2" fill="rgba(0,212,255,0.9)"/>
-                          {/* Smile */}
-                          <path d="M11 14c0 0 1.5 2 3 2s3-2 3-2" stroke="rgba(0,212,255,0.8)" strokeWidth="1.2" strokeLinecap="round"/>
-                          {/* Upload arrow */}
-                          <path d="M14 22v4M12 24l2-2 2 2" stroke="rgba(0,212,255,0.6)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{background:"linear-gradient(135deg,#00D4FF,#0891b2)"}}>
-                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 5l3-3 3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[10px] font-black text-white/70 mb-0.5">Front face</p>
-                      <p className="text-[8px] text-white/30 leading-snug">Look straight<br/>neutral expression</p>
-                    </div>
+                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-2 cursor-pointer group">
+                    <p className="text-[13px] font-black text-white/60 group-hover:text-white/90 transition-colors">+ Add photo</p>
+                    <p className="text-[9px] text-white/25 leading-snug text-center">Face front<br/>neutral expression</p>
                     <input type="file" className="hidden" accept="image/*" onChange={handleImage}/>
                   </label>
                 )}
@@ -821,7 +800,7 @@ export default function Home(){
               <div className="flex items-center gap-1.5 mb-0.5">
                 <span className="text-[8px] font-black uppercase tracking-widest" style={{color:"#A855F7"}}>👤 Profile</span>
                 {sideImageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full" style={{background:"rgba(168,85,247,0.12)",color:"#A855F7"}}>✓ Ready</span>}
-                {!sideImageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full border" style={{color:"#A855F7",borderColor:"rgba(168,85,247,0.30)"}}>+20% précision</span>}
+                {!sideImageUrl&&<span className="text-[7px] font-black px-1.5 py-0.5 rounded-full border" style={{color:"#A855F7",borderColor:"rgba(168,85,247,0.30)"}}>Optional</span>}
               </div>
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden border transition-all" style={{borderColor:sideImageUrl?"rgba(168,85,247,0.40)":"rgba(168,85,247,0.15)",background:sideImageUrl?"rgba(255,255,255,0.01)":"rgba(168,85,247,0.02)"}}>
                 {sideImageUrl&&<img src={sideImageUrl} className={`w-full h-full object-cover ${analyzing&&sideInterimLandmarks?"opacity-0":"opacity-100"} transition-opacity`} alt="scan profil"/>}
@@ -831,32 +810,9 @@ export default function Home(){
                   <div className="absolute inset-0 pointer-events-none" style={{backgroundImage:"linear-gradient(rgba(168,85,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,0.03) 1px,transparent 1px)",backgroundSize:"16px 16px"}}/>
                 )}
                 {!sideImageUrl&&(
-                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-3 cursor-pointer group">
-                    {/* Beautiful side-profile upload icon */}
-                    <div className="relative">
-                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all group-hover:scale-105" style={{background:"linear-gradient(135deg,rgba(168,85,247,0.18),rgba(168,85,247,0.06))",border:"1px solid rgba(168,85,247,0.30)"}}>
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          {/* Side profile of a face - clean silhouette */}
-                          {/* Head */}
-                          <path d="M8 20 C8 20 7 17 7 14 C7 9.5 10 6 14.5 6 C18 6 20.5 8.5 20.5 12 C20.5 15 19 17 17 18 L17 20" stroke="rgba(168,85,247,0.85)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                          {/* Nose bump */}
-                          <path d="M20.5 12 L22 13 L20.5 14" stroke="rgba(168,85,247,0.85)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                          {/* Eye */}
-                          <circle cx="16" cy="11" r="1.1" fill="rgba(168,85,247,0.9)"/>
-                          {/* Jaw / chin */}
-                          <path d="M8 20 C8 20 10 22 13 22 L17 22" stroke="rgba(168,85,247,0.70)" strokeWidth="1.3" strokeLinecap="round"/>
-                          {/* Upload arrow */}
-                          <path d="M6 25v2M5 26l1-1 1 1" stroke="rgba(168,85,247,0.6)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)"}}>
-                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 5l3-3 3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[10px] font-black text-white/70 mb-0.5">Side profile</p>
-                      <p className="text-[8px] leading-snug" style={{color:"rgba(168,85,247,0.7)"}}>Strongly recommended<br/>ear visible</p>
-                    </div>
+                  <label className="absolute inset-0 flex flex-col items-center justify-center gap-2 cursor-pointer group">
+                    <p className="text-[13px] font-black group-hover:text-white/90 transition-colors" style={{color:"rgba(168,85,247,0.6)"}}>+ Add photo</p>
+                    <p className="text-[9px] text-white/25 leading-snug text-center">Side profile<br/>ear visible</p>
                     <input type="file" className="hidden" accept="image/*" onChange={handleSideImage}/>
                   </label>
                 )}
@@ -872,6 +828,23 @@ export default function Home(){
               </div>
             </div>
           </div>
+
+          {/* SHARED PROGRESS BAR — centered between both photos during analysis */}
+          {analyzing&&sideImageUrl&&(
+            <div className="flex flex-col items-center mb-4 px-2">
+              <div className="flex items-center gap-2 mb-2 w-full justify-center">
+                <span className="text-[7px] font-black uppercase tracking-widest" style={{color:"#00D4FF"}}>Face</span>
+                <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{background:"rgba(255,255,255,0.05)"}}>
+                  <div className="h-full rounded-full transition-all duration-700" style={{width:`${progress}%`,background:"linear-gradient(90deg,#00D4FF,#A855F7,#00D4FF)",boxShadow:"0 0 8px rgba(168,85,247,0.8)"}}/>
+                </div>
+                <span className="text-[7px] font-black uppercase tracking-widest" style={{color:"#A855F7"}}>Profile</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[8px] font-black" style={{color:"#A855F7"}}>{progress}%</span>
+                <span className="text-[7px] text-white/30 font-bold uppercase tracking-widest">{analysisStep}</span>
+              </div>
+            </div>
+          )}
 
           {/* Side profile importance banner — shown when front is uploaded but not side */}
           {imageUrl&&!sideImageUrl&&!analyzing&&(
