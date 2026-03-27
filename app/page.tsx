@@ -1007,7 +1007,7 @@ export default function Home(){
                     {icon:"🏆",t:"Your rank in the population",ok:true},
                     {icon:"🧬",t:"Full 50+ criteria analysis",ok:false},
                     {icon:"💎",t:"Personalized AI max potential",ok:false},
-                    {icon:"📋",t:"Detailed personalized tips",ok:false},
+                    {icon:"📋",t:"All tips you need for optimal face change",ok:false},
                   ].map((item,i)=>(
                     <div key={i} className={`flex items-center gap-2.5 ${item.ok?"opacity-100":"opacity-28"}`}>
                       <span className={`text-sm flex-shrink-0 ${!item.ok?"grayscale":""}`}>{item.icon}</span>
@@ -1046,8 +1046,8 @@ export default function Home(){
 
                 <div className="mb-4 flex items-center gap-3 p-3 rounded-xl border" style={{background:"rgba(255,255,255,0.03)",borderColor:"rgba(255,255,255,0.06)"}}>
                   <div className="text-center flex-shrink-0">
-                    <p className="text-3xl font-black" style={{color:"#A855F7"}}>{filteredAdvice.length}+</p>
-                    <p className="text-[7px] text-white/30 uppercase tracking-wider font-black">tips</p>
+                    <p className="text-3xl font-black" style={{color:"#A855F7"}}>All</p>
+                    <p className="text-[7px] text-white/30 uppercase tracking-wider font-black">tips you need</p>
                   </div>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center gap-1.5"><span className="text-[8px]">🌿</span><span className="text-[9px] text-white/45">Soft: skincare, hydration, sleep</span></div>
@@ -1062,7 +1062,7 @@ export default function Home(){
                     {icon:"🏆",t:"Population ranking"},
                     {icon:"🧬",t:"Full 50+ criteria analysis"},
                     {icon:"💎",t:"Personalized AI max potential"},
-                    {icon:"📋",t:`${filteredAdvice.length}+ tips ranked by impact`},
+                    {icon:"📋",t:"All tips you need for optimal face change"},
                     {icon:"🌿",t:"From softest to most advanced"},
                     {icon:"📅",t:"30-day progression guide"},
                     {icon:"🛒",t:"Recommended products per tip"},
@@ -1147,7 +1147,7 @@ export default function Home(){
           <div className="flex gap-1 p-1 rounded-2xl mb-4 border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)"}}>
             {(["scores","potential","advice"] as const).map(tab=>(
               <button key={tab} onClick={()=>setActiveTab(tab)} className={`flex-1 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all relative ${activeTab===tab?"bg-white text-black":"text-white/22 hover:text-white/45"}`}>
-                {tab==="scores"?"Scores":tab==="potential"?"Potential":`Conseils (${filteredAdvice.length})`}
+                {tab==="scores"?"Scores":tab==="potential"?"Potential":"All Tips"}
                 {!showDeepDive&&(tab==="potential"||tab==="advice")&&<span className="absolute -top-1 -right-1 text-[8px]">🔒</span>}
               </button>
             ))}
@@ -1210,15 +1210,15 @@ export default function Home(){
             !showDeepDive?(
               <div className="p-6 rounded-3xl mb-4 text-center border" style={{background:"rgba(255,255,255,0.02)",borderColor:"rgba(255,255,255,0.04)"}}>
                 <div className="text-4xl mb-3">🎯</div>
-                <p className="text-[14px] font-black text-white/60 mb-2">Tips locked</p>
-                <p className="text-[11px] text-white/35 mb-5 leading-relaxed">{filteredAdvice.length} personalized tips ranked by impact, with expected gains and concrete timelines.</p>
+                <p className="text-[14px] font-black text-white/60 mb-2">All tips you need for optimal face change</p>
+                <p className="text-[11px] text-white/35 mb-5 leading-relaxed">All tips ranked by impact, with expected gains and concrete timelines.</p>
                 <button onClick={()=>setOfferUnlocked(null)} className="w-full py-4 font-black text-[11px] uppercase tracking-[0.12em] rounded-xl transition-all hover:scale-[1.02] text-white" style={{background:"linear-gradient(135deg,#A855F7,#7c3aed)",boxShadow:"0 0 30px rgba(168,85,247,0.3)"}}>
                   🔓 View offers
                 </button>
               </div>
             ):(
               <div className="space-y-2 mb-4">
-                <p className="text-[8px] text-white/16 uppercase tracking-widest font-black">{filteredAdvice.length} tips · decreasing impact</p>
+                <p className="text-[8px] text-white/16 uppercase tracking-widest font-black">All tips you need · decreasing impact</p>
                 {filteredAdvice.map((a,i)=>{
                   const links=AMAZON_LINKS[a.category]||[];
                   const isOpen=expandedAdvice===i;
